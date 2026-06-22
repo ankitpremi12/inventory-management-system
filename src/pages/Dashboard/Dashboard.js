@@ -1,0 +1,173 @@
+import React, { useState } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { MdSpaceDashboard, MdMenu, MdClose, MdInventory } from 'react-icons/md';
+import { TbTruckDelivery } from 'react-icons/tb';
+import { RiShoppingCartFill, RiSettings5Fill, RiLogoutBoxRFill, RiProfileLine } from 'react-icons/ri';
+import { FiSearch, FiMessageSquare, FiBell, FiHelpCircle } from 'react-icons/fi';
+import { BiTrendingUp } from 'react-icons/bi';
+import LinkComponents from '../../components/navbar/LinkComponents';
+
+const CubeLogo = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Top face */}
+        <path d="M12 2.5L20.5 7L12 11.5L3.5 7L12 2.5Z" fill="#ebdcd0" stroke="#0f283c" strokeWidth="1.5" strokeLinejoin="round" />
+        {/* Left face */}
+        <path d="M3.5 7V16.5L12 21V11.5L3.5 7Z" fill="#0f283c" stroke="#0f283c" strokeWidth="1.5" strokeLinejoin="round" />
+        {/* Right face */}
+        <path d="M12 11.5V21L20.5 16.5V7L12 11.5Z" fill="#1e3a8a" stroke="#0f283c" strokeWidth="1.5" strokeLinejoin="round" />
+    </svg>
+);
+
+const Dashboard = () => {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    return (
+        <div className="flex min-h-screen" style={{ background: 'var(--navy)' }}>
+
+            {/* ── Mobile overlay ───────────────────────── */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
+            {/* ── Sidebar ──────────────────────────────── */}
+            <aside className={`ims-sidebar ${sidebarOpen ? 'open' : ''}`} style={{ background: '#f3ebe1' }}>
+                {/* Logo */}
+                <div className="flex items-center justify-center py-6 border-b border-white/5">
+                    <div style={{
+                        width: 44, height: 44, borderRadius: 12,
+                        background: '#ffffff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 2px 8px rgba(15, 40, 60, 0.05)',
+                        flexShrink: 0,
+                    }}>
+                        <CubeLogo />
+                    </div>
+                </div>
+
+                {/* Nav links */}
+                <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+                    <LinkComponents to={''} icon={<MdSpaceDashboard />} name={'Dashboard'} />
+                    <LinkComponents to={'products/main'} icon={<MdInventory />} name={'Inventory'} />
+                    <LinkComponents to={'orders/main'} icon={<RiShoppingCartFill />} name={'Orders'} />
+                    <LinkComponents to={'suppliers/lists'} icon={<TbTruckDelivery />} name={'Suppliers'} />
+                    <LinkComponents to={'analytics'} icon={<BiTrendingUp />} name={'Analytics'} />
+
+                    {/* Spacer to push Settings & Help to the bottom */}
+                    <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
+                        <LinkComponents to={'setup/categories'} icon={<RiSettings5Fill />} name={'Settings'} />
+                        <LinkComponents to={'help'} icon={<FiHelpCircle />} name={'Help'} />
+                    </div>
+                </nav>
+            </aside>
+
+            {/* ── Main area ─────────────────────────── */}
+            <div className="ims-content flex-1">
+                {/* Top bar */}
+                <header className="ims-topbar justify-between" style={{ background: '#f3ebe1', borderBottom: 'none' }}>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                            className="lg:hidden ims-btn ims-btn-ghost ims-btn-icon"
+                        >
+                            {sidebarOpen ? <MdClose size={20} /> : <MdMenu size={20} />}
+                        </button>
+                        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                            Inventory Management
+                        </h2>
+                    </div>
+
+                    <div className="flex items-center gap-4" style={{ flexWrap: 'nowrap' }}>
+                        {/* Search bar */}
+                        <div style={{
+                            display: 'flex', alignItems: 'center', gap: 10,
+                            background: '#0c223c',
+                            borderRadius: 10, padding: '7px 14px', width: 200
+                        }}>
+                            <FiSearch style={{ color: '#94a3b8' }} size={16} />
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                style={{
+                                    background: 'transparent', border: 'none', outline: 'none',
+                                    fontSize: '0.8rem', color: '#ffffff', width: '100%',
+                                    fontFamily: 'inherit'
+                                }}
+                            />
+                        </div>
+
+                        {/* Chat icon */}
+                        <button className="ims-btn ims-btn-ghost ims-btn-icon relative" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'transparent' }}>
+                            <FiMessageSquare size={18} />
+                        </button>
+
+                        {/* Notification bell */}
+                        <button className="ims-btn ims-btn-ghost ims-btn-icon relative" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'transparent' }}>
+                            <FiBell size={18} />
+                            <span style={{
+                                position: 'absolute', top: 6, right: 6,
+                                width: 6, height: 6, borderRadius: '50%',
+                                background: 'var(--rose)'
+                            }} />
+                        </button>
+
+                        {/* User Profile dropdown */}
+                        <div className="dropdown dropdown-end">
+                            <div
+                                tabIndex={0}
+                                className="flex items-center gap-2 cursor-pointer"
+                                style={{
+                                    width: 34, height: 34, borderRadius: '50%',
+                                    background: '#ebdcd0', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}
+                            >
+                                <img
+                                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin"
+                                    alt="avatar"
+                                    style={{ width: 34, height: 34, borderRadius: '50%' }}
+                                />
+                            </div>
+                            <ul
+                                tabIndex={0}
+                                className="dropdown-content mt-2 p-1 rounded-xl w-48"
+                                style={{
+                                    background: 'var(--navy-card)',
+                                    border: '1px solid var(--navy-border)',
+                                    boxShadow: '0 8px 32px rgba(15,40,60,0.1)',
+                                }}
+                            >
+                                {[
+                                    { to: '/profile', icon: <RiProfileLine />, label: 'Profile' },
+                                    { to: '/dashboard/setup/categories', icon: <RiSettings5Fill />, label: 'Settings' },
+                                    { to: '/', icon: <RiLogoutBoxRFill />, label: 'Log Out', danger: true },
+                                ].map((item, idx) => (
+                                    <li key={idx}>
+                                        <Link
+                                            to={item.to}
+                                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150"
+                                            style={{ color: item.danger ? 'var(--rose)' : 'var(--text-secondary)' }}
+                                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(15,40,60,0.05)'}
+                                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                            <span className="text-base">{item.icon}</span>
+                                            {item.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </header>
+
+                {/* Page content */}
+                <main className="p-6" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+                    <Outlet />
+                </main>
+            </div>
+        </div>
+    );
+};
+
+export default Dashboard;

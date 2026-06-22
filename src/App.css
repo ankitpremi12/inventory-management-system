@@ -1,0 +1,17 @@
+.App {
+  min-height: 100vh;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(4px);
+}
+
+.Toastify__toast {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+}
+.Toastify__progress-bar { background: #14b8a6 !important; }
+.Toastify__close-button { color: #94a3b8 !important; }
