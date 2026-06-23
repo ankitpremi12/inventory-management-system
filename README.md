@@ -1,35 +1,6 @@
-<h1 align="center">Inventory Management System (Full-stack)</h1>
+<h1 align="center">AP Solutions</h1>
 
-<!-- repository summary badges start -->
-<div align="center">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/ankitpremi12/inventory-management-system?style=social">
-    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/ankitpremi12/inventory-management-system?style=social">
-    <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/ankitpremi12/inventory-management-system?style=social">
-    <img alt="language badge" src="https://img.shields.io/github/languages/count/ankitpremi12/inventory-management-system"/>
-    <img alt="top language badge" src="https://img.shields.io/github/languages/top/ankitpremi12/inventory-management-system">
-    <img alt="goto badge" src="https://img.shields.io/github/search/ankitpremi12/inventory-management-system/goto">
-    <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/ankitpremi12/inventory-management-system">
-    <img alt="GitHub repo file count" src="https://img.shields.io/github/directory-file-count/ankitpremi12/inventory-management-system">
-    <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/ankitpremi12/inventory-management-system">
-    <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/ankitpremi12/inventory-management-system/total">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/ankitpremi12/inventory-management-system">
-    <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/ankitpremi12/inventory-management-system">
-    <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/ankitpremi12/inventory-management-system">
-    <img alt="GitHub closed pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/ankitpremi12/inventory-management-system">
-    <img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/ankitpremi12/inventory-management-system">
-    <img alt="GitHub milestones" src="https://img.shields.io/github/milestones/closed/ankitpremi12/inventory-management-system">
-    <img alt="GitHub" src="https://img.shields.io/github/license/ankitpremi12/inventory-management-system">
-    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/ankitpremi12/inventory-management-system">
-    <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/ankitpremi12/inventory-management-system">
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/ankitpremi12/inventory-management-system">
-    <img alt="GitHub Discussions" src="https://img.shields.io/github/discussions/ankitpremi12/inventory-management-system">
-</div>
-<!-- repository summary badges end -->
 
-<br>
-<br>
-
-### Website Link: https://inventory-managemnt-system.web.app/
 
 ### Client Side Code:
 
