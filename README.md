@@ -1,44 +1,84 @@
-<h1 align="center">AP Solutions</h1>
+# AP Solutions — Containerized Inventory & Order Management System
 
+AP Solutions is a production-ready, full-stack, containerized **Inventory & Order Management System** built with **FastAPI**, **PostgreSQL**, and **React**. The entire system is structured for simple orchestration using Docker Compose and prepared for free-tier cloud deployment.
 
+---
 
-### Client Side Code:
+## 1. Features & Business Logic
 
-### Server Side Code:
+### 1.1 Product Management
+- **CRUD Operations**: Create, read, update, and delete products.
+- **Fields**: Product name, SKU/code, Price, and Quantity in stock.
+- **Business Rule**: Product SKU/code must be unique. Stock quantity cannot be negative.
 
-### Features
+### 1.2 Customer Management
+- **CRUD Operations**: Create, view all, view by ID, and delete customers.
+- **Fields**: Full name, Email address, and Phone number.
+- **Business Rule**: Customer email must be unique.
 
-1. Authentication (Firebase)
-2. Manage products (CRUD operations)
-3. User profile
-4. Author Profile
-5. Dashboard
-6. Admin panel
+### 1.3 Order Management
+- **Creation & Tracking**: Create and view orders, and view itemized invoices.
+- **Fields**: Customer reference, Product reference(s), Quantity ordered, and Total amount.
+- **Business Rules**:
+  - Automatically calculates total order amount by fetching current prices on the backend.
+  - Validates stock levels before placing the order. Insufficient stock rejects order creation.
+  - Automatically reduces available stock upon order creation inside a transaction block.
+  - Deleting/canceling an order automatically restores the product stock back to the inventory.
 
-### Technology Used
+### 1.4 Dashboard Overview
+- **Real-Time KPI Cards**: Total Products, Total Customers, Total Orders.
+- **Low Stock Alerts**: Displays warnings for products with stock &le; 10.
+- **Overview Mix Chart**: Visual breakdown of records in the system.
 
-1. React JS
-2. Express.js
-3. Cors
-4. Dotenv
-5. Nodemon
-6. MongoDB
-7. Tailwind CSS
-8. HTML
+---
 
-### Hosting
+## 2. Technology Stack
 
-1. Client-side hosting: Firebase
-2. Server-side hosting: Heroku
+- **Backend**: Python 3.10, FastAPI, SQLAlchemy (ORM)
+- **Frontend**: React (JS), TailwindCSS, Recharts, Nginx (production server)
+- **Database**: PostgreSQL 15
+- **Containerization**: Docker & Docker Compose
 
-<br>
-<br>
+---
 
-<div align="center">
-    <a href="https://github.com/ankitpremi12/inventory-management-system">
-        <img width="396" src="https://github-readme-stats-mu-jet.vercel.app/api/pin/?username=ankitpremi12&repo=inventory-management-system&theme=react&bg_color=0D1117&border_color=61dafb&hide_border=false" alt="repository badge" />
-    </a>
-</div>
+## 3. Repository Structure
 
-<br>
-<br>
+```
+├── backend/                  # FastAPI Application
+│   ├── config.py             # Settings manager
+│   ├── database.py           # DB connection & session maker
+│   ├── models.py             # SQLAlchemy DB schemas
+│   ├── schemas.py            # Pydantic validation schemas
+│   ├── main.py               # REST API endpoints & business logic
+│   ├── Dockerfile            # Python builder
+│   └── requirements.txt      # Python dependencies
+├── frontend/                 # React Application
+│   ├── src/                  # Components, pages, and UI utilities
+│   ├── public/               # Static assets & HTML template
+│   ├── nginx.conf            # Nginx routing configuration
+│   └── Dockerfile            # Multi-stage React builder & server
+└── docker-compose.yml        # Multi-service local orchestrator
+```
+
+---
+
+## 4. Local Quick Start
+
+To orchestrate and run the application locally:
+
+1. **Prerequisites**: Make sure **Docker Desktop** is installed and running.
+2. **Boot the Containers**: Run the following command in the project root:
+   ```bash
+   docker-compose up --build
+   ```
+3. **Services Access**:
+   - **React Web App**: Open [http://localhost:3000](http://localhost:3000)
+   - **Interactive API Documentation**: Open [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger UI)
+   - **PostgreSQL Database**: Port `5432` on `localhost` (User: `postgres`, Password: `postgres`, DB: `inventory_db`)
+
+---
+
+## 5. Deployment Setup
+
+- **Backend API & PostgreSQL**: Deployed on **Render** (Free tier Web Service + PostgreSQL Database).
+- **Frontend Web App**: Deployed on **Vercel** pointing to the Render API endpoint via `REACT_APP_API_BASE_URL` environment variable.

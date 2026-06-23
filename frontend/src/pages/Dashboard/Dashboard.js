@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { MdSpaceDashboard, MdMenu, MdClose, MdInventory } from 'react-icons/md';
-import { TbTruckDelivery } from 'react-icons/tb';
 import { RiShoppingCartFill, RiSettings5Fill, RiLogoutBoxRFill, RiProfileLine } from 'react-icons/ri';
-import { FiSearch, FiMessageSquare, FiBell, FiHelpCircle } from 'react-icons/fi';
-import { BiTrendingUp } from 'react-icons/bi';
+import { FiMessageSquare, FiBell, FiUsers } from 'react-icons/fi';
 import LinkComponents from '../../components/navbar/LinkComponents';
 
 const CubeLogo = () => (
@@ -50,15 +48,13 @@ const Dashboard = () => {
                 {/* Nav links */}
                 <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
                     <LinkComponents to={''} icon={<MdSpaceDashboard />} name={'Dashboard'} />
-                    <LinkComponents to={'products/main'} icon={<MdInventory />} name={'Inventory'} />
-                    <LinkComponents to={'orders/main'} icon={<RiShoppingCartFill />} name={'Orders'} />
-                    <LinkComponents to={'suppliers/lists'} icon={<TbTruckDelivery />} name={'Suppliers'} />
-                    <LinkComponents to={'analytics'} icon={<BiTrendingUp />} name={'Analytics'} />
+                    <LinkComponents to={'products'} icon={<MdInventory />} name={'Products'} />
+                    <LinkComponents to={'customers'} icon={<FiUsers />} name={'Customers'} />
+                    <LinkComponents to={'orders'} icon={<RiShoppingCartFill />} name={'Orders'} />
 
-                    {/* Spacer to push Settings & Help to the bottom */}
+                    {/* Spacer to push Settings & Logout to the bottom */}
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
-                        <LinkComponents to={'setup/categories'} icon={<RiSettings5Fill />} name={'Settings'} />
-                        <LinkComponents to={'help'} icon={<FiHelpCircle />} name={'Help'} />
+                        <LinkComponents to={'/settings'} icon={<RiSettings5Fill />} name={'Settings'} />
                     </div>
                 </nav>
             </aside>
@@ -75,29 +71,11 @@ const Dashboard = () => {
                             {sidebarOpen ? <MdClose size={20} /> : <MdMenu size={20} />}
                         </button>
                         <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                            Inventory Management
+                            AP Solutions Dashboard
                         </h2>
                     </div>
 
                     <div className="flex items-center gap-4" style={{ flexWrap: 'nowrap' }}>
-                        {/* Search bar */}
-                        <div style={{
-                            display: 'flex', alignItems: 'center', gap: 10,
-                            background: '#0c223c',
-                            borderRadius: 10, padding: '7px 14px', width: 200
-                        }}>
-                            <FiSearch style={{ color: '#94a3b8' }} size={16} />
-                            <input
-                                type="text"
-                                placeholder="Search products..."
-                                style={{
-                                    background: 'transparent', border: 'none', outline: 'none',
-                                    fontSize: '0.8rem', color: '#ffffff', width: '100%',
-                                    fontFamily: 'inherit'
-                                }}
-                            />
-                        </div>
-
                         {/* Chat icon */}
                         <button className="ims-btn ims-btn-ghost ims-btn-icon relative" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'transparent' }}>
                             <FiMessageSquare size={18} />
@@ -140,7 +118,7 @@ const Dashboard = () => {
                             >
                                 {[
                                     { to: '/profile', icon: <RiProfileLine />, label: 'Profile' },
-                                    { to: '/dashboard/setup/categories', icon: <RiSettings5Fill />, label: 'Settings' },
+                                    { to: '/settings', icon: <RiSettings5Fill />, label: 'Settings' },
                                     { to: '/', icon: <RiLogoutBoxRFill />, label: 'Log Out', danger: true },
                                 ].map((item, idx) => (
                                     <li key={idx}>

@@ -25,3 +25,20 @@ yarn-error.log*
 node_modules/
 build/
 .kilocode/
+
+# python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# database
+*.db
+*.sqlite3
+
+# local env
+.env
+.env.*
+.dockerignore
+/backend/.env
+/frontend/.env
