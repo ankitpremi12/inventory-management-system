@@ -25,8 +25,8 @@ const Register = () => {
             }} className="hidden lg:flex">
                 <div style={{ position: 'absolute', top: -80, left: -80, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle,rgba(139,92,246,0.15),transparent 70%)', pointerEvents: 'none' }} />
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 48 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 16 }}>S</div>
-                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>String <span style={{ color: 'var(--teal)' }}>LAB</span></span>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 16 }}>A</div>
+                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
                 </div>
                 <h2 style={{ fontSize: '2rem', fontWeight: 900, lineHeight: 1.2, marginBottom: 16, color: '#f1f5f9' }}>
                     Start your free<br />
@@ -35,7 +35,7 @@ const Register = () => {
                     </span>
                 </h2>
                 <p style={{ color: '#94a3b8', lineHeight: 1.7, marginBottom: 36, fontSize: '0.9rem' }}>
-                    Join hundreds of businesses already using String LAB to manage their stock, orders, and suppliers.
+                    Join hundreds of businesses already using AP Solutions to manage their stock, orders, and suppliers.
                 </p>
                 {['No credit card required', 'Full-featured free trial', 'Cancel anytime'].map((t, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
@@ -48,8 +48,8 @@ const Register = () => {
             {/* Right panel */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', overflowY: 'auto' }}>
                 <div className="lg:hidden" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 36 }}>
-                    <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 14 }}>S</div>
-                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>String <span style={{ color: 'var(--teal)' }}>LAB</span></span>
+                    <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 14 }}>A</div>
+                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
                 </div>
 
                 <div style={{ width: '100%', maxWidth: 440 }}>
@@ -93,7 +93,7 @@ const Register = () => {
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.5 }}>
                             <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ accentColor: 'var(--teal)', marginTop: 2, flexShrink: 0 }} />
                             <span>
-                                I agree to String LAB's{' '}
+                                I agree to AP Solutions'{' '}
                                 <Link to="/terms-and-conditions" style={{ color: 'var(--teal)' }}>Terms of Service</Link>
                                 {' '}and{' '}
                                 <Link to="/privacy-policy" style={{ color: 'var(--teal)' }}>Privacy Policy</Link>

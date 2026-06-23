@@ -44,9 +44,9 @@ const UserNavbar = () => {
                     background: 'linear-gradient(135deg,#0d9488,#8b5cf6)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 800, color: '#fff', fontSize: 15,
-                }}>S</div>
+                }}>A</div>
                 <span style={{ fontWeight: 700, fontSize: '1rem', color: '#f1f5f9', letterSpacing: '-0.01em' }}>
-                    String <span style={{ color: 'var(--teal)' }}>LAB</span>
+                    AP <span style={{ color: 'var(--teal)' }}>Solutions</span>
                 </span>
             </Link>
 

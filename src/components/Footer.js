@@ -20,8 +20,8 @@ const Footer = () => {
                     {/* Brand column */}
                     <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 14 }}>S</div>
-                            <span style={{ fontWeight: 700, color: '#f1f5f9', fontSize: '0.95rem' }}>String <span style={{ color: 'var(--teal)' }}>LAB</span></span>
+                            <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 14 }}>A</div>
+                            <span style={{ fontWeight: 700, color: '#f1f5f9', fontSize: '0.95rem' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
                         </div>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.825rem', lineHeight: 1.7, maxWidth: 200 }}>
                             Modern inventory management for wholesale and retail businesses.
@@ -81,7 +81,7 @@ const Footer = () => {
                     flexWrap: 'wrap', gap: 12,
                 }}>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-                        © {new Date().getFullYear()} String LAB. All rights reserved.
+                        © {new Date().getFullYear()} AP Solutions. All rights reserved.
                     </p>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                         Built with{' '}

@@ -44,8 +44,8 @@ const Login = () => {
 
                 {/* Logo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 56 }}>
-                    <div style={{ width: 38, height: 38, borderRadius: 11, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 17 }}>S</div>
-                    <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#f1f5f9' }}>String <span style={{ color: 'var(--teal)' }}>LAB</span></span>
+                    <div style={{ width: 38, height: 38, borderRadius: 11, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 17 }}>A</div>
+                    <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#f1f5f9' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
                 </div>
 
                 <h2 style={{ fontSize: '2.2rem', fontWeight: 900, lineHeight: 1.2, marginBottom: 16, color: '#f1f5f9' }}>
@@ -72,8 +72,8 @@ const Login = () => {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
                 {/* Mobile logo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }} className="lg:hidden">
-                    <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 15 }}>S</div>
-                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>String <span style={{ color: 'var(--teal)' }}>LAB</span></span>
+                    <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 15 }}>A</div>
+                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
                 </div>
 
                 <div style={{ width: '100%', maxWidth: 420 }}>
