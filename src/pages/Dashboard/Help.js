@@ -32,7 +32,7 @@ const Help = () => {
                     Still need help?
                 </p>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 4 }}>
-                    Email support at <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>support@stringlab.com</span> or call 1-800-555-0199.
+                    Email support at <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>support@inventory-management.com</span> or call 1-800-555-0199.
                 </p>
             </div>
         </div>
