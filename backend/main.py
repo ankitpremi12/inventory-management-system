@@ -374,3 +374,77 @@ def get_dashboard_summary(db: Session = Depends(get_db)):
         "total_orders": total_orders,
         "low_stock_products": low_stock_list
     }
+
+# --- DASHBOARD ANALYTICS ENDPOINT ---
+@app.get("/dashboard/analytics")
+def get_dashboard_analytics(db: Session = Depends(get_db)):
+    from sqlalchemy import func
+
+    # 1. Sales over time
+    sales_query = db.query(
+        func.date(models.Order.created_at).label("date"),
+        func.sum(models.Order.total_amount).label("revenue"),
+        func.count(models.Order.id).label("orders_count")
+    ).group_by(func.date(models.Order.created_at)).order_by(func.date(models.Order.created_at)).all()
+    
+    sales_over_time = []
+    for row in sales_query:
+        sales_over_time.append({
+            "date": str(row.date),
+            "revenue": float(row.revenue or 0),
+            "orders": row.orders_count
+        })
+
+    # 2. Top selling products
+    top_products_query = db.query(
+        models.Product.name,
+        func.sum(models.OrderItem.quantity).label("units_sold"),
+        func.sum(models.OrderItem.quantity * models.OrderItem.price_at_order).label("revenue")
+    ).join(models.OrderItem, models.Product.id == models.OrderItem.product_id)\
+     .group_by(models.Product.id)\
+     .order_by(func.sum(models.OrderItem.quantity).desc())\
+     .limit(5).all()
+     
+    top_products = []
+    for row in top_products_query:
+        top_products.append({
+            "name": row.name,
+            "units_sold": int(row.units_sold or 0),
+            "revenue": float(row.revenue or 0)
+        })
+
+    # 3. Stock status distribution
+    in_stock_count = db.query(models.Product).filter(models.Product.quantity > 10).count()
+    low_stock_count = db.query(models.Product).filter(models.Product.quantity > 0, models.Product.quantity <= 10).count()
+    out_of_stock_count = db.query(models.Product).filter(models.Product.quantity == 0).count()
+    
+    stock_distribution = [
+        {"name": "In Stock (>10)", "value": in_stock_count},
+        {"name": "Low Stock (1-10)", "value": low_stock_count},
+        {"name": "Out of Stock", "value": out_of_stock_count}
+    ]
+
+    # 4. Top customers by value
+    top_customers_query = db.query(
+        models.Customer.name,
+        func.count(models.Order.id).label("orders_count"),
+        func.sum(models.Order.total_amount).label("total_spent")
+    ).join(models.Order, models.Customer.id == models.Order.customer_id)\
+     .group_by(models.Customer.id)\
+     .order_by(func.sum(models.Order.total_amount).desc())\
+     .limit(5).all()
+     
+    top_customers = []
+    for row in top_customers_query:
+        top_customers.append({
+            "name": row.name,
+            "orders_count": row.orders_count,
+            "total_spent": float(row.total_spent or 0)
+        })
+
+    return {
+        "sales_over_time": sales_over_time,
+        "top_products": top_products,
+        "stock_distribution": stock_distribution,
+        "top_customers": top_customers
+    }

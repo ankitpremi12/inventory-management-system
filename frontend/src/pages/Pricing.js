@@ -30,13 +30,13 @@ const Pricing = () => {
     ]
     return (
         <div>
-            <DefaultNavbar />
+            <DefaultNavbar isLight={true} />
             <section className="text-gray-600 body-font overflow-hidden">
                 <div className="container px-5 py-24 mx-auto">
                     <div className="flex flex-col text-center w-full mb-20">
                         <h1 className="sm:text-4xl text-3xl font-medium title-font mb-2 text-secondary">Pricing</h1>
 
-                        <p className="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-500">Whatever cardigan tote bag tumblr hexagon brooklyn asymmetrical.</p>
+                        <p className="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-500">Choose a plan that fits your business needs, from startup tracking to enterprise operations.</p>
 
                         <div className="flex mx-auto border-2 border-primary rounded overflow-hidden mt-6">
                             <button className="py-1 px-4 bg-primary text-white focus:outline-none">Monthly</button>
@@ -46,27 +46,32 @@ const Pricing = () => {
 
                     <div className="flex flex-wrap -m-4">
                         {
-                            pricing.map(p =>
-                                <div key={p.id} className="p-4 xl:w-2/6 md:w-1/2 w-full hover:shadow-lg hover:shadow-secondary">
-                                    <div className="h-full p-6 rounded-lg border-2 border-info flex flex-col relative overflow-hidden">
-                                        <h2 className="text-sm tracking-widest title-font mb-1 font-medium uppercase">{p.planName}</h2>
-                                        <h1 className="text-5xl text-gray-900 pb-4 mb-4 border-b border-gray-200 leading-none">{p.price}</h1>
+                            pricing.map(p => {
+                                const ctaText = p.planName === 'Start' ? 'Get Started Free' : (p.planName === 'Standard' ? 'Upgrade to Standard' : 'Get Advanced');
+                                return (
+                                    <div key={p.id} className="p-4 xl:w-2/6 md:w-1/2 w-full hover:shadow-lg hover:shadow-secondary">
+                                        <div className="h-full p-6 rounded-lg border-2 border-info flex flex-col relative overflow-hidden">
+                                            <h2 className="text-sm tracking-widest title-font mb-1 font-medium uppercase">{p.planName}</h2>
+                                            <h1 className="text-5xl text-gray-900 pb-4 mb-4 border-b border-gray-200 leading-none">{p.price}</h1>
 
-                                        {
-                                            p.features.map((f, index) =>
-                                                <p key={index} className="flex items-center text-gray-600 mb-2">
-                                                    <RiArrowRightCircleFill className='text-xl text-primary mr-2' />
-                                                    {f}
-                                                </p>)
-                                        }
+                                            {
+                                                p.features.map((f, index) =>
+                                                    <p key={index} className="flex items-center text-gray-600 mb-2">
+                                                        <RiArrowRightCircleFill className='text-xl text-primary mr-2' />
+                                                        {f}
+                                                    </p>)
+                                            }
 
-                                        <button className="flex items-center justify-between text-white bg-secondary border-0 py-2 px-4 w-full focus:outline-none hover:bg-primary rounded my-4">Button
-                                            <FaLongArrowAltRight />
-                                        </button>
+                                            <button className="flex items-center justify-between text-white bg-secondary border-0 py-2 px-4 w-full focus:outline-none hover:bg-primary rounded my-4">
+                                                {ctaText}
+                                                <FaLongArrowAltRight />
+                                            </button>
 
-                                        <p className="text-xs text-gray-500 mt-3">{p.description}</p>
+                                            <p className="text-xs text-gray-500 mt-3">{p.description}</p>
+                                        </div>
                                     </div>
-                                </div>)
+                                );
+                            })
                         }
                     </div>
                 </div>

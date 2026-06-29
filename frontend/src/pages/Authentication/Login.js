@@ -73,12 +73,12 @@ const Login = () => {
                 {/* Mobile logo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }} className="lg:hidden">
                     <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 15 }}>A</div>
-                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
+                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
                 </div>
 
                 <div style={{ width: '100%', maxWidth: 420 }}>
                     <div style={{ marginBottom: 32 }}>
-                        <h1 style={{ fontSize: '1.7rem', fontWeight: 800, color: '#f1f5f9', marginBottom: 8 }}>Welcome back</h1>
+                        <h1 style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>Welcome back</h1>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Sign in to access your inventory</p>
                     </div>
 

@@ -42,3 +42,5 @@ __pycache__/
 .dockerignore
 /backend/.env
 /frontend/.env
+.vercel
+.env*

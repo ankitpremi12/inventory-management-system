@@ -12,6 +12,7 @@ import DashboardSummary from './pages/Dashboard/DashboardSummary';
 import Products from './pages/Dashboard/Products';
 import Customers from './pages/Dashboard/Customers';
 import Orders from './pages/Dashboard/Orders';
+import Analytics from './pages/Dashboard/Analytics';
 import Profile from './pages/User/Profile';
 import Settings from './pages/User/Settings';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -36,7 +37,7 @@ function App() {
           <Route path="products" element={<Products />} />
           <Route path="customers" element={<Customers />} />
           <Route path="orders" element={<Orders />} />
-          <Route path="analytics" element={<DashboardSummary />} />
+          <Route path="analytics" element={<Analytics />} />
           {/* Fallback inside dashboard */}
           <Route path="*" element={<Navigate to="" replace />} />
         </Route>

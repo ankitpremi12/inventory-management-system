@@ -19,7 +19,7 @@ const NotFound = () => {
                 marginBottom: 16,
             }}>404</div>
 
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f1f5f9', marginBottom: 12 }}>Page not found</h1>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Page not found</h1>
             <p style={{ color: 'var(--text-muted)', maxWidth: 380, lineHeight: 1.7, marginBottom: 36 }}>
                 The page you're looking for doesn't exist or has been moved.
             </p>

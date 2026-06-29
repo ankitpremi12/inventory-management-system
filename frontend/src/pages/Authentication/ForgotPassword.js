@@ -16,7 +16,7 @@ const ForgotPassword = () => {
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--navy)', display: 'flex', flexDirection: 'column' }}>
-            <DefaultNavbar />
+            <DefaultNavbar isLight={true} />
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px' }}>
                 <div style={{
                     width: '100%', maxWidth: 400,
@@ -34,7 +34,7 @@ const ForgotPassword = () => {
                             }}>
                                 <FiMail size={24} />
                             </div>
-                            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f1f5f9', marginBottom: 8 }}>Forgot password?</h1>
+                            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>Forgot password?</h1>
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: 28 }}>
                                 No worries. Enter your email and we'll send a reset link.
                             </p>
@@ -68,9 +68,9 @@ const ForgotPassword = () => {
                                 }}>
                                     <FiMail size={26} />
                                 </div>
-                                <h2 style={{ fontWeight: 800, color: '#f1f5f9', fontSize: '1.2rem', marginBottom: 10 }}>Check your inbox</h2>
+                                <h2 style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1.2rem', marginBottom: 10 }}>Check your inbox</h2>
                                 <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                                    We sent a password reset link to <strong style={{ color: '#f1f5f9' }}>{email}</strong>
+                                    We sent a password reset link to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>
                                 </p>
                             </div>
                         </>

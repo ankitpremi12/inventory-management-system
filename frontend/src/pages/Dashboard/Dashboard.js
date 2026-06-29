@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { MdSpaceDashboard, MdMenu, MdClose, MdInventory } from 'react-icons/md';
+import { MdSpaceDashboard, MdMenu, MdClose, MdInventory, MdAnalytics } from 'react-icons/md';
 import { RiShoppingCartFill, RiSettings5Fill, RiLogoutBoxRFill, RiProfileLine } from 'react-icons/ri';
-import { FiMessageSquare, FiBell, FiUsers } from 'react-icons/fi';
+import { FiMessageSquare, FiUsers } from 'react-icons/fi';
 import LinkComponents from '../../components/navbar/LinkComponents';
 
 const CubeLogo = () => (
@@ -31,7 +31,7 @@ const Dashboard = () => {
             )}
 
             {/* ── Sidebar ──────────────────────────────── */}
-            <aside className={`ims-sidebar ${sidebarOpen ? 'open' : ''}`} style={{ background: '#f3ebe1' }}>
+            <aside className={`ims-sidebar ${sidebarOpen ? 'open' : ''}`}>
                 {/* Logo */}
                 <div className="flex items-center justify-center py-6 border-b border-white/5">
                     <div style={{
@@ -51,6 +51,7 @@ const Dashboard = () => {
                     <LinkComponents to={'products'} icon={<MdInventory />} name={'Products'} />
                     <LinkComponents to={'customers'} icon={<FiUsers />} name={'Customers'} />
                     <LinkComponents to={'orders'} icon={<RiShoppingCartFill />} name={'Orders'} />
+                    <LinkComponents to={'analytics'} icon={<MdAnalytics />} name={'Analytics'} />
 
                     {/* Spacer to push Settings & Logout to the bottom */}
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
@@ -62,7 +63,7 @@ const Dashboard = () => {
             {/* ── Main area ─────────────────────────── */}
             <div className="ims-content flex-1">
                 {/* Top bar */}
-                <header className="ims-topbar justify-between" style={{ background: '#f3ebe1', borderBottom: 'none' }}>
+                <header className="ims-topbar justify-between" style={{ background: 'var(--navy-card)', borderBottom: '1px solid var(--navy-border)' }}>
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -81,15 +82,6 @@ const Dashboard = () => {
                             <FiMessageSquare size={18} />
                         </button>
 
-                        {/* Notification bell */}
-                        <button className="ims-btn ims-btn-ghost ims-btn-icon relative" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'transparent' }}>
-                            <FiBell size={18} />
-                            <span style={{
-                                position: 'absolute', top: 6, right: 6,
-                                width: 6, height: 6, borderRadius: '50%',
-                                background: 'var(--rose)'
-                            }} />
-                        </button>
 
                         {/* User Profile dropdown */}
                         <div className="dropdown dropdown-end">

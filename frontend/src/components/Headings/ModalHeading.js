@@ -5,7 +5,7 @@ const ModalHeading = ({ modalHeading }) => {
         <div style={{ marginBottom: 20, paddingRight: 36 }}>
             <h2 style={{
                 fontSize: '1.1rem', fontWeight: 700,
-                color: '#f1f5f9', margin: 0, lineHeight: 1.3,
+                color: 'var(--text-primary)', margin: 0, lineHeight: 1.3,
             }}>
                 {modalHeading}
             </h2>

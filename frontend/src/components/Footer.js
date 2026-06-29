@@ -87,9 +87,9 @@ const Footer = () => {
                         Built with{' '}
                         <span style={{ color: 'var(--teal)' }}>React</span>
                         {' '}·{' '}
-                        <span style={{ color: 'var(--violet)' }}>Node.js</span>
+                        <span style={{ color: 'var(--violet)' }}>FastAPI</span>
                         {' '}·{' '}
-                        <span style={{ color: '#10b981' }}>MongoDB</span>
+                        <span style={{ color: '#336791' }}>PostgreSQL</span>
                     </p>
                 </div>
             </div>

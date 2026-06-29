@@ -113,7 +113,7 @@ const UserNavbar = () => {
                                     to={item.to}
                                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150"
                                     style={{ color: item.danger ? 'var(--rose)' : 'var(--text-secondary)' }}
-                                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(15,40,60,0.05)'}
                                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                                 >
                                     <span className="text-base">{item.icon}</span>

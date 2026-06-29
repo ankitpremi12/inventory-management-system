@@ -49,12 +49,12 @@ const Register = () => {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', overflowY: 'auto' }}>
                 <div className="lg:hidden" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 36 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(135deg,#0d9488,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 14 }}>A</div>
-                    <span style={{ fontWeight: 700, color: '#f1f5f9' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
+                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>AP <span style={{ color: 'var(--teal)' }}>Solutions</span></span>
                 </div>
 
                 <div style={{ width: '100%', maxWidth: 440 }}>
                     <div style={{ marginBottom: 28 }}>
-                        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#f1f5f9', marginBottom: 6 }}>Create your account</h1>
+                        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 6 }}>Create your account</h1>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>It only takes a minute.</p>
                     </div>
 

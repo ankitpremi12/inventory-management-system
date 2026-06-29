@@ -7,7 +7,7 @@ const navLinks = [
     { id: 4, to: '/dashboard',label: 'Dashboard' },
 ];
 
-const DefaultNavbar = () => {
+const DefaultNavbar = ({ isLight = false }) => {
     const [scrolled, setScrolled] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -17,15 +17,19 @@ const DefaultNavbar = () => {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
+    const navTextColor = isLight && !scrolled ? 'var(--text-secondary)' : '#94a3b8';
+    const navHoverColor = isLight && !scrolled ? 'var(--text-primary)' : '#f1f5f9';
+    const logoColor = isLight && !scrolled ? 'var(--text-primary)' : '#f1f5f9';
+
     return (
         <nav
             id="default-navbar"
             style={{
                 position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-                background: scrolled ? 'rgba(15,23,42,0.85)' : 'transparent',
+                background: scrolled ? (isLight ? 'rgba(255, 255, 255, 0.92)' : 'rgba(15,23,42,0.85)') : 'transparent',
                 backdropFilter: scrolled ? 'blur(16px)' : 'none',
                 WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
-                borderBottom: scrolled ? '1px solid rgba(51,65,85,0.5)' : '1px solid transparent',
+                borderBottom: scrolled ? (isLight ? '1px solid var(--navy-border)' : '1px solid rgba(51,65,85,0.5)') : '1px solid transparent',
                 transition: 'all 0.3s ease',
                 padding: '0 24px',
                 height: 68,
@@ -42,7 +46,7 @@ const DefaultNavbar = () => {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 800, color: '#fff', fontSize: 15,
                 }}>A</div>
-                <span style={{ fontWeight: 700, fontSize: '1rem', color: '#f1f5f9', letterSpacing: '-0.01em' }}>
+                <span style={{ fontWeight: 700, fontSize: '1rem', color: logoColor, letterSpacing: '-0.01em' }}>
                     AP <span style={{ color: 'var(--teal)' }}>Solutions</span>
                 </span>
             </Link>
@@ -59,14 +63,14 @@ const DefaultNavbar = () => {
                                 borderRadius: 8,
                                 fontSize: '0.875rem',
                                 fontWeight: 500,
-                                color: isActive ? 'var(--teal)' : '#94a3b8',
+                                color: isActive ? 'var(--teal)' : navTextColor,
                                 textDecoration: 'none',
                                 background: isActive ? 'rgba(20,184,166,0.1)' : 'transparent',
                                 transition: 'all 0.15s ease',
                                 display: 'block',
                             })}
-                            onMouseEnter={e => { if (!e.currentTarget.style.background.includes('rgba(20,184,166,0.1)')) e.currentTarget.style.color = '#f1f5f9'; }}
-                            onMouseLeave={e => { if (!e.currentTarget.style.background.includes('rgba(20,184,166,0.1)')) e.currentTarget.style.color = '#94a3b8'; }}
+                            onMouseEnter={e => { if (!e.currentTarget.style.background.includes('rgba(20,184,166,0.1)')) e.currentTarget.style.color = navHoverColor; }}
+                            onMouseLeave={e => { if (!e.currentTarget.style.background.includes('rgba(20,184,166,0.1)')) e.currentTarget.style.color = navTextColor; }}
                         >
                             {link.label}
                         </NavLink>
@@ -87,6 +91,7 @@ const DefaultNavbar = () => {
                     className="lg:hidden ims-btn ims-btn-ghost ims-btn-icon"
                     onClick={() => setOpen(!open)}
                     aria-label="Toggle menu"
+                    style={{ color: logoColor }}
                 >
                     {open ? <HiX size={22} /> : <HiMenuAlt3 size={22} />}
                 </button>
@@ -96,7 +101,7 @@ const DefaultNavbar = () => {
             {open && (
                 <div style={{
                     position: 'absolute', top: 68, left: 0, right: 0,
-                    background: 'rgba(15,23,42,0.97)',
+                    background: isLight ? 'rgba(255, 255, 255, 0.98)' : 'rgba(15,23,42,0.97)',
                     backdropFilter: 'blur(16px)',
                     borderBottom: '1px solid var(--navy-border)',
                     padding: '16px 20px 20px',
@@ -111,7 +116,7 @@ const DefaultNavbar = () => {
                                     style={({ isActive }) => ({
                                         display: 'block', padding: '10px 14px', borderRadius: 8,
                                         fontSize: '0.9rem', fontWeight: 500,
-                                        color: isActive ? 'var(--teal)' : '#94a3b8',
+                                        color: isActive ? 'var(--teal)' : (isLight ? 'var(--text-secondary)' : '#94a3b8'),
                                         textDecoration: 'none',
                                         background: isActive ? 'rgba(20,184,166,0.1)' : 'transparent',
                                     })}

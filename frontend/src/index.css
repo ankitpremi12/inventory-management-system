@@ -54,8 +54,8 @@ body {
 .ims-sidebar {
   width: var(--sidebar-w);
   min-height: 100vh;
-  background: var(--navy);
-  border-right: 1px solid var(--navy-border);
+  background: #0c1524;
+  border-right: 1px solid rgba(255,255,255,0.06);
   position: fixed;
   top: 0; left: 0;
   z-index: 40;
@@ -71,7 +71,7 @@ body {
   gap: 10px;
   padding: 10px 16px;
   border-radius: 99px; /* rounded pill links as in mockup */
-  color: var(--text-secondary);
+  color: #cbd5e1;
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s ease;

@@ -7,7 +7,7 @@ const DashboardPageHeading = ({ name, value, buttons }) => {
             justifyContent: 'space-between', gap: 12, marginBottom: 24,
         }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>{name}</h1>
+                <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{name}</h1>
                 {value !== undefined && (
                     <span style={{
                         background: 'rgba(20,184,166,0.15)',
