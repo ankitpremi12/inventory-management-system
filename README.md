@@ -8,10 +8,10 @@ AP Solutions is a production-ready, full-stack, containerized **Inventory & Orde
 
 | Resource | Link |
 | :--- | :--- |
-| **GitHub Repository** | [GitHub - inventory-management-system](https://github.com/ankitpremi12/inventory-management-system) |
-| **Backend Docker Hub Image** | [Docker Hub - inventory-backend](https://hub.docker.com/r/ankitpremi12/inventory-backend) *(Note: Replace `ankitpremi12` with your actual Docker Hub username if different)* |
-| **Frontend Hosted URL** | [Vercel Deployment URL](https://inventory-management-system-frontend.vercel.app/) *(Placeholder — Replace with your live Vercel URL)* |
-| **Backend API Hosted URL** | [Render API Service URL](https://inventory-management-system-backend.onrender.com/) *(Placeholder — Replace with your live Render URL)* |
+| **GitHub Repository** | [ankitpremi12/inventory-management-system](https://github.com/ankitpremi12/inventory-management-system) |
+| **Backend Docker Hub Image** | [ankitpremi12/inventory-backend](https://hub.docker.com/r/ankitpremi12/inventory-backend) |
+| **Frontend Hosted URL** | [inventory-management-system-8d9e.vercel.app](https://inventory-management-system-8d9e.vercel.app) |
+| **Backend API Hosted URL** | *(Deploy backend on Render and update this link)* |
 
 ---
 
@@ -92,8 +92,8 @@ To orchestrate and run the application locally:
 
 ## 5. Deployment Setup
 
-- **Backend API & PostgreSQL**: Deployed on **Render** (Free tier Web Service + PostgreSQL Database).
-- **Frontend Web App**: Deployed on **Vercel** pointing to the Render API endpoint via `REACT_APP_API_BASE_URL` environment variable.
+- **Backend API & PostgreSQL**: Deployed on **Render** (Free tier Web Service + PostgreSQL Database). Set the `REACT_APP_API_BASE_URL` environment variable in Vercel to point to your Render API URL.
+- **Frontend Web App**: Deployed on **Vercel** at [inventory-management-system-8d9e.vercel.app](https://inventory-management-system-8d9e.vercel.app). A `vercel.json` at the root configures the build to use the `frontend/` directory and enables SPA routing.
 
 ---
 
