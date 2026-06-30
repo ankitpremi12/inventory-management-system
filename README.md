@@ -11,7 +11,7 @@ AP Solutions is a production-ready, full-stack, containerized **Inventory & Orde
 | **GitHub Repository** | [ankitpremi12/inventory-management-system](https://github.com/ankitpremi12/inventory-management-system) |
 | **Backend Docker Hub Image** | [ankitpremi12/inventory-backend](https://hub.docker.com/r/ankitpremi12/inventory-backend) |
 | **Frontend Hosted URL** | [inventory-management-system-8d9e.vercel.app](https://inventory-management-system-8d9e.vercel.app) |
-| **Backend API Hosted URL** | *(Deploy backend on Render and update this link)* |
+| **Backend API Hosted URL** | [inventory-management-system-backend.onrender.com](https://inventory-management-system-backend.onrender.com) |
 
 ---
 
