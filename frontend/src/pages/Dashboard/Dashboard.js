@@ -108,24 +108,21 @@ const Dashboard = () => {
                                     boxShadow: '0 8px 32px rgba(15,40,60,0.1)',
                                 }}
                             >
-                                {[
-                                    { to: '/profile', icon: <RiProfileLine />, label: 'Profile' },
-                                    { to: '/settings', icon: <RiSettings5Fill />, label: 'Settings' },
-                                    { to: '/', icon: <RiLogoutBoxRFill />, label: 'Log Out', danger: true },
-                                ].map((item, idx) => (
-                                    <li key={idx}>
-                                        <Link
-                                            to={item.to}
-                                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150"
-                                            style={{ color: item.danger ? 'var(--rose)' : 'var(--text-secondary)' }}
-                                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(15,40,60,0.05)'}
-                                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                                        >
-                                            <span className="text-base">{item.icon}</span>
-                                            {item.label}
-                                        </Link>
-                                    </li>
-                                ))}
+                                <li>
+                                    <Link to="/profile" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150" style={{ color: 'var(--text-secondary)' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(15,40,60,0.05)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <span className="text-base"><RiProfileLine /></span> Profile
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/settings" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150" style={{ color: 'var(--text-secondary)' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(15,40,60,0.05)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <span className="text-base"><RiSettings5Fill /></span> Settings
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/" onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150" style={{ color: 'var(--rose)' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(15,40,60,0.05)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <span className="text-base"><RiLogoutBoxRFill /></span> Log Out
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
                     </div>
