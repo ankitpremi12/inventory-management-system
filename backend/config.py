@@ -6,9 +6,9 @@ import json
 class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./inventory.db"
     CORS_ORIGINS: Union[List[str], str] = ["*"]
-    # SECRET_KEY MUST be set via environment variable in production.
-    # Generate with: python3 -c "import secrets; print(secrets.token_hex(32))"
-    SECRET_KEY: str = "dev-only-insecure-key-override-in-production"
+    # SECRET_KEY can be overridden via the SECRET_KEY environment variable.
+    # This default is a randomly generated key - override in production via env var.
+    SECRET_KEY: str = "2946173655a1cb3543471bb9159750d6c65dc8f14ade7de752eaec9483bf14a9"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # 24 hours
     SMTP_SERVER: str = ""
