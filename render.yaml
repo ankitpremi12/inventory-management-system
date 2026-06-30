@@ -7,14 +7,6 @@ services:
     plan: free
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: inventory-db
-          property: connectionString
+        sync: false
       - key: CORS_ORIGINS
         value: '["*"]'
-
-databases:
-  - name: inventory-db
-    plan: free
-    databaseName: inventory_db
-    user: postgres
