@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: inventory-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: inventory-db
+          property: connectionString
+      - key: CORS_ORIGINS
+        value: '["*"]'
+
+databases:
+  - name: inventory-db
+    plan: free
+    databaseName: inventory_db
+    user: postgres
