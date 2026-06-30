@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Advanced To-Do List</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="navbar">
+        <div class="brand">Advanced To-Do</div>
+        <div class="search-wrap">
+          <input id="search" class="search" placeholder="Search tasks..." />
+        </div>
+        <div class="nav-actions">
+          <button id="open-settings" class="icon-btn">⚙️</button>
+          <button id="toggle-theme" class="icon-btn">🌓</button>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="sidebar-top">
+            <button id="add-task-btn" class="primary">+ Add Task</button>
+            <h4>Categories</h4>
+            <ul id="category-list" class="category-list"></ul>
+            <div class="new-category">
+              <input id="new-category-input" placeholder="New category" />
+              <button id="add-category-btn">Add</button>
+            </div>
+          </div>
+          <div class="sidebar-bottom">
+            <h4>Filters</h4>
+            <div class="filters">
+              <label>Priority
+                <select id="filter-priority">
+                  <option value="all">All</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </label>
+              <label>Status
+                <select id="filter-status">
+                  <option value="all">All</option>
+                  <option value="active">Active</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </label>
+              <label>Sort
+                <select id="sort-by">
+                  <option value="createdDesc">Newest</option>
+                  <option value="createdAsc">Oldest</option>
+                  <option value="dueAsc">Due Date ↑</option>
+                  <option value="dueDesc">Due Date ↓</option>
+                  <option value="priorityDesc">Priority</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        <main class="dashboard">
+          <section class="dashboard-header">
+            <h2>Tasks</h2>
+            <div class="progress-wrap">
+              <div id="progress-text">0 / 0</div>
+              <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width:0%"></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="task-list" class="task-list"></section>
+
+          <footer class="footer">Built with ❤️ — Works offline (Local Storage)</footer>
+        </main>
+      </div>
+
+      <!-- Task Modal -->
+      <div id="modal" class="modal hidden">
+        <div class="modal-content">
+          <h3 id="modal-title">Add Task</h3>
+          <form id="task-form">
+            <input id="task-id" type="hidden" />
+            <label>Title<input id="task-title" required maxlength="120" /></label>
+            <label>Description<textarea id="task-desc"></textarea></label>
+            <label>Due Date<input id="task-due" type="date" /></label>
+            <label>Priority
+              <select id="task-priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </label>
+            <label>Category<input id="task-category" placeholder="Category" /></label>
+
+            <div class="form-actions">
+              <button type="submit" class="primary">Save</button>
+              <button type="button" id="cancel-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div id="settings" class="settings hidden">
+        <h3>Settings</h3>
+        <label>Theme
+          <select id="theme-select">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <button id="close-settings">Close</button>
+      </div>
+    </div>
+
+    <script src="src/app.js"></script>
+  </body>
+</html>
