@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Authentication/Login';
 import Register from './pages/Authentication/Register';
 import ForgotPassword from './pages/Authentication/ForgotPassword';
+import ResetPassword from './pages/Authentication/ResetPassword';
 import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard/Dashboard';
 import DashboardSummary from './pages/Dashboard/DashboardSummary';
@@ -17,33 +18,39 @@ import Profile from './pages/User/Profile';
 import Settings from './pages/User/Settings';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="home" element={<Home />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="terms-and-conditions" element={<TermsAndConditions />} />
-        <Route path="privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="settings" element={<Settings />} />
-        
-        <Route path="dashboard" element={<Dashboard />}>
-          <Route index element={<DashboardSummary />} />
-          <Route path="products" element={<Products />} />
-          <Route path="customers" element={<Customers />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="analytics" element={<Analytics />} />
-          {/* Fallback inside dashboard */}
-          <Route path="*" element={<Navigate to="" replace />} />
-        </Route>
-        
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="home" element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+          
+          <Route path="dashboard" element={<ProtectedRoute />}>
+            <Route element={<Dashboard />}>
+              <Route index element={<DashboardSummary />} />
+              <Route path="products" element={<Products />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="analytics" element={<Analytics />} />
+              {/* Fallback inside dashboard */}
+              <Route path="*" element={<Navigate to="" replace />} />
+            </Route>
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AuthProvider>
       <ToastContainer
         position="top-right"
         autoClose={4000}

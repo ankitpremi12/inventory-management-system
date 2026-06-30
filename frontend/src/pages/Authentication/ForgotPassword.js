@@ -2,16 +2,26 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiMail } from 'react-icons/fi';
 import DefaultNavbar from '../../components/DefaultNavbar';
+import { postJson } from '../../api';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [sent, setSent] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setTimeout(() => { setLoading(false); setSent(true); }, 800);
+        setError(null);
+        try {
+            await postJson('/auth/forgot-password', { email });
+            setSent(true);
+        } catch (err) {
+            setError(err.message || 'Failed to send reset link.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -38,6 +48,16 @@ const ForgotPassword = () => {
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: 28 }}>
                                 No worries. Enter your email and we'll send a reset link.
                             </p>
+
+                            {error && (
+                                <div style={{ 
+                                    background: '#fee2e2', color: '#b91c1c', padding: '12px', 
+                                    borderRadius: '8px', marginBottom: '20px', fontSize: '0.9rem' 
+                                }}>
+                                    {error}
+                                </div>
+                            )}
+
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                                 <div className="ims-input-wrap">
                                     <label className="ims-label">Email Address</label>

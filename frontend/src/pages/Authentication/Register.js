@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { AuthContext } from '../../context/AuthContext';
 
 const Register = () => {
     const navigate = useNavigate();
+    const { register } = useContext(AuthContext);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPass, setShowPass] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [agreed, setAgreed] = useState(false);
 
-    const handleRegister = event => {
+    const handleRegister = async (event) => {
         event.preventDefault();
         if (!agreed) return;
         setLoading(true);
-        setTimeout(() => { setLoading(false); navigate('/login'); }, 800);
+        setError(null);
+        try {
+            await register(email, password);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.message || 'Registration failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -53,12 +66,21 @@ const Register = () => {
                 </div>
 
                 <div style={{ width: '100%', maxWidth: 440 }}>
-                    <div style={{ marginBottom: 28 }}>
-                        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 6 }}>Create your account</h1>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>It only takes a minute.</p>
+                    <div style={{ marginBottom: 32 }}>
+                        <h1 style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>Create an account</h1>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join us to start managing your inventory</p>
                     </div>
 
-                    <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                    {error && (
+                        <div style={{ 
+                            background: '#fee2e2', color: '#b91c1c', padding: '12px', 
+                            borderRadius: '8px', marginBottom: '20px', fontSize: '0.9rem' 
+                        }}>
+                            {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                             <div className="ims-input-wrap">
                                 <label className="ims-label">First Name</label>
@@ -72,13 +94,13 @@ const Register = () => {
 
                         <div className="ims-input-wrap">
                             <label className="ims-label">Email Address</label>
-                            <input type="email" placeholder="you@company.com" className="ims-input" required />
+                            <input type="email" placeholder="you@company.com" className="ims-input" value={email} onChange={e => setEmail(e.target.value)} required />
                         </div>
 
                         <div className="ims-input-wrap">
                             <label className="ims-label">Password</label>
                             <div style={{ position: 'relative' }}>
-                                <input type={showPass ? 'text' : 'password'} placeholder="Min. 8 characters" className="ims-input" style={{ paddingRight: 44 }} required />
+                                <input type={showPass ? 'text' : 'password'} placeholder="Min. 8 characters" className="ims-input" style={{ paddingRight: 44 }} value={password} onChange={e => setPassword(e.target.value)} required />
                                 <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0 }}>
                                     {showPass ? <FiEyeOff size={16} /> : <FiEye size={16} />}
                                 </button>

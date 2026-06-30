@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi';
 import { FiCheckCircle } from 'react-icons/fi';
+import { AuthContext } from '../../context/AuthContext';
 
 const features = [
     'Multi-category product and asset tracking',
@@ -12,18 +13,25 @@ const features = [
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPass, setShowPass] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const handleLogin = event => {
+    const handleLogin = async (event) => {
         event.preventDefault();
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        setError(null);
+        try {
+            await login(email, password);
             navigate('/dashboard');
-        }, 800);
+        } catch (err) {
+            setError(err.message || 'Login failed. Please check your credentials.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -81,6 +89,15 @@ const Login = () => {
                         <h1 style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>Welcome back</h1>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Sign in to access your inventory</p>
                     </div>
+
+                    {error && (
+                        <div style={{ 
+                            background: '#fee2e2', color: '#b91c1c', padding: '12px', 
+                            borderRadius: '8px', marginBottom: '20px', fontSize: '0.9rem' 
+                        }}>
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                         <div className="ims-input-wrap">

@@ -9,7 +9,17 @@ export const buildApiUrl = (endpoint) => {
 };
 
 export const fetchJson = async (endpoint, options = {}) => {
-  const response = await fetch(buildApiUrl(endpoint), options);
+  const token = localStorage.getItem('token');
+  const headers = { ...options.headers };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(buildApiUrl(endpoint), {
+    ...options,
+    headers,
+  });
   
   // Handle HTTP 204 No Content
   if (response.status === 204) {
@@ -18,6 +28,12 @@ export const fetchJson = async (endpoint, options = {}) => {
   
   const data = await response.json().catch(() => null);
   
+  if (response.status === 401) {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+    throw new Error('Unauthorized');
+  }
+
   if (!response.ok) {
     // FastAPI returns errors inside 'detail'
     const errorMsg = data?.detail || data?.message || `Request failed with status ${response.status}`;
