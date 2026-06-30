@@ -8,5 +8,19 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false
+      - key: SECRET_KEY
+        sync: false
       - key: CORS_ORIGINS
-        value: '["*"]'
+        value: '["https://inventory-management-system-8d9e.vercel.app"]'
+      - key: FRONTEND_URL
+        value: 'https://inventory-management-system-8d9e.vercel.app'
+      - key: SMTP_SERVER
+        sync: false
+      - key: SMTP_PORT
+        value: '587'
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM_EMAIL
+        sync: false

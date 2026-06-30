@@ -8,7 +8,7 @@ def send_reset_email(to_email: str, reset_token: str):
         print(f"WARNING: SMTP not configured. Would have sent reset token {reset_token} to {to_email}")
         return False
         
-    reset_link = f"http://localhost:3000/reset-password?token={reset_token}" # Frontend URL
+    reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
     
     msg = MIMEMultipart()
     msg['From'] = settings.SMTP_FROM_EMAIL

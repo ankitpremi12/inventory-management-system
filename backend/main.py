@@ -27,10 +27,16 @@ app = FastAPI(
 )
 
 # CORS configuration
+# Per CORS spec: allow_credentials=True CANNOT be combined with allow_origins=["*"].
+# Since we use JWT in Authorization headers (not cookies), we only need credentials=True
+# when specific origins are set. With wildcard, credentials must be False.
+_cors_origins = config.settings.CORS_ORIGINS
+_use_credentials = "*" not in _cors_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=config.settings.CORS_ORIGINS,
-    allow_credentials=True,
+    allow_origins=_cors_origins,
+    allow_credentials=_use_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
