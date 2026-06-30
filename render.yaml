@@ -11,7 +11,7 @@ services:
       - key: SECRET_KEY
         value: '2946173655a1cb3543471bb9159750d6c65dc8f14ade7de752eaec9483bf14a9'
       - key: CORS_ORIGINS
-        value: '["https://inventory-management-system-8d9e.vercel.app"]'
+        value: '["*"]'
       - key: FRONTEND_URL
         value: 'https://inventory-management-system-8d9e.vercel.app'
       - key: SMTP_SERVER
