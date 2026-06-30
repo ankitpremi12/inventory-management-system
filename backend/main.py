@@ -7,7 +7,10 @@ from contextlib import asynccontextmanager
 from decimal import Decimal
 
 from .database import engine, Base, get_db
-from . import models, schemas, config
+from . import models, schemas, config, auth, email_utils
+from fastapi.security import OAuth2PasswordRequestForm
+import secrets
+from datetime import datetime, timedelta
 
 # Create database tables if they do not exist
 @asynccontextmanager
@@ -32,10 +35,61 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- AUTH ENDPOINTS ---
+
+@app.post("/auth/register", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
+def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    hashed_password = auth.get_password_hash(user.password)
+    new_user = models.User(email=user.email, hashed_password=hashed_password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+@app.post("/auth/login", response_model=schemas.Token)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == form_data.username).first()
+    if not user or not auth.verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token = auth.create_access_token(data={"sub": user.email})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/auth/forgot-password")
+def forgot_password(req: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == req.email).first()
+    if user:
+        token = secrets.token_urlsafe(32)
+        user.reset_token = token
+        user.reset_token_expiry = datetime.utcnow() + timedelta(hours=1)
+        db.commit()
+        email_utils.send_reset_email(user.email, token)
+    # Always return a generic message to prevent email enumeration
+    return {"message": "If an account with that email exists, a password reset link has been sent."}
+
+@app.post("/auth/reset-password")
+def reset_password(req: schemas.ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.reset_token == req.token).first()
+    if not user or not user.reset_token_expiry or user.reset_token_expiry < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+        
+    user.hashed_password = auth.get_password_hash(req.new_password)
+    user.reset_token = None
+    user.reset_token_expiry = None
+    db.commit()
+    return {"message": "Password updated successfully."}
+
+
 # --- PRODUCTS ENDPOINTS ---
 
 @app.post("/products", response_model=schemas.ProductResponse, status_code=status.HTTP_201_CREATED)
-def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
+def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     # Convert empty/whitespace SKU to None
     if product.sku:
         product.sku = product.sku.strip()
@@ -68,11 +122,11 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
         )
 
 @app.get("/products", response_model=List[schemas.ProductResponse])
-def get_products(db: Session = Depends(get_db)):
+def get_products(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     return db.query(models.Product).all()
 
 @app.get("/products/{product_id}", response_model=schemas.ProductResponse)
-def get_product(product_id: int, db: Session = Depends(get_db)):
+def get_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
@@ -82,7 +136,7 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     return product
 
 @app.put("/products/{product_id}", response_model=schemas.ProductResponse)
-def update_product(product_id: int, product_update: schemas.ProductUpdate, db: Session = Depends(get_db)):
+def update_product(product_id: int, product_update: schemas.ProductUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
@@ -127,7 +181,7 @@ def update_product(product_id: int, product_update: schemas.ProductUpdate, db: S
         )
 
 @app.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(product_id: int, db: Session = Depends(get_db)):
+def delete_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
@@ -143,7 +197,7 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
 # --- CUSTOMERS ENDPOINTS ---
 
 @app.post("/customers", response_model=schemas.CustomerResponse, status_code=status.HTTP_201_CREATED)
-def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
+def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     # Check email uniqueness
     db_customer = db.query(models.Customer).filter(models.Customer.email == customer.email).first()
     if db_customer:
@@ -166,11 +220,11 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
         )
 
 @app.get("/customers", response_model=List[schemas.CustomerResponse])
-def get_customers(db: Session = Depends(get_db)):
+def get_customers(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     return db.query(models.Customer).all()
 
 @app.get("/customers/{customer_id}", response_model=schemas.CustomerResponse)
-def get_customer(customer_id: int, db: Session = Depends(get_db)):
+def get_customer(customer_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(
@@ -180,7 +234,7 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
     return customer
 
 @app.delete("/customers/{customer_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_customer(customer_id: int, db: Session = Depends(get_db)):
+def delete_customer(customer_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(
@@ -196,7 +250,7 @@ def delete_customer(customer_id: int, db: Session = Depends(get_db)):
 # --- ORDERS ENDPOINTS ---
 
 @app.post("/orders", response_model=schemas.OrderResponse, status_code=status.HTTP_201_CREATED)
-def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db)):
+def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     # 1. Verify customer exists
     customer = db.query(models.Customer).filter(models.Customer.id == order_data.customer_id).first()
     if not customer:
@@ -284,7 +338,7 @@ def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db))
         )
 
 @app.get("/orders", response_model=List[schemas.OrderResponse])
-def get_orders(db: Session = Depends(get_db)):
+def get_orders(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     orders = db.query(models.Order).all()
     response_orders = []
     
@@ -302,7 +356,7 @@ def get_orders(db: Session = Depends(get_db)):
     return response_orders
 
 @app.get("/orders/{order_id}", response_model=schemas.OrderResponse)
-def get_order(order_id: int, db: Session = Depends(get_db)):
+def get_order(order_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if not order:
         raise HTTPException(
@@ -321,7 +375,7 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
     return resp
 
 @app.delete("/orders/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
-def cancel_order(order_id: int, db: Session = Depends(get_db)):
+def cancel_order(order_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if not order:
         raise HTTPException(
@@ -349,7 +403,7 @@ def cancel_order(order_id: int, db: Session = Depends(get_db)):
 
 # --- DASHBOARD SUMMARY ENDPOINT ---
 @app.get("/dashboard/summary")
-def get_dashboard_summary(db: Session = Depends(get_db)):
+def get_dashboard_summary(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     total_products = db.query(models.Product).count()
     total_customers = db.query(models.Customer).count()
     total_orders = db.query(models.Order).count()
@@ -377,7 +431,7 @@ def get_dashboard_summary(db: Session = Depends(get_db)):
 
 # --- DASHBOARD ANALYTICS ENDPOINT ---
 @app.get("/dashboard/analytics")
-def get_dashboard_analytics(db: Session = Depends(get_db)):
+def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     from sqlalchemy import func
 
     # 1. Sales over time

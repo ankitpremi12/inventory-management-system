@@ -3,6 +3,30 @@ from typing import List, Optional
 from decimal import Decimal
 from datetime import datetime
 
+# --- AUTH SCHEMAS ---
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=6)
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    is_active: int
+
+    class Config:
+        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str = Field(..., min_length=6)
+
 # --- PRODUCT SCHEMAS ---
 class ProductBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
