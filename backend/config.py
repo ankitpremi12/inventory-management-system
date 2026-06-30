@@ -7,6 +7,14 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./inventory.db"
     CORS_ORIGINS: Union[List[str], str] = ["*"]
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def parse_database_url(cls, v):
+        # If the env var is set but empty, fallback to sqlite
+        if not v or not str(v).strip():
+            return "sqlite:///./inventory.db"
+        return v
+
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, v):
