@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { MdSpaceDashboard, MdMenu, MdClose, MdInventory, MdAnalytics } from 'react-icons/md';
+import {
+    MdSpaceDashboard, MdMenu, MdClose, MdInventory, MdAnalytics,
+    MdOutlineCategory, MdBusiness, MdMedicalServices
+} from 'react-icons/md';
 import { RiShoppingCartFill, RiSettings5Fill, RiLogoutBoxRFill, RiProfileLine } from 'react-icons/ri';
-import { FiMessageSquare, FiUsers } from 'react-icons/fi';
+import {
+    FiMessageSquare, FiUsers, FiPackage, FiArrowLeftCircle,
+    FiFileText, FiDollarSign, FiTruck, FiChevronDown, FiChevronRight,
+    FiBriefcase, FiRepeat, FiShoppingBag, FiAlertCircle
+} from 'react-icons/fi';
 import LinkComponents from '../../components/navbar/LinkComponents';
 
 const CubeLogo = () => (
@@ -15,6 +22,59 @@ const CubeLogo = () => (
         <path d="M12 11.5V21L20.5 16.5V7L12 11.5Z" fill="#1e3a8a" stroke="#0f283c" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
 );
+
+const SectionLabel = ({ label }) => (
+    <div style={{
+        fontSize: '0.6rem',
+        fontWeight: 800,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.3)',
+        padding: '12px 12px 4px',
+        marginTop: 4,
+    }}>
+        {label}
+    </div>
+);
+
+const CollapsibleSection = ({ label, icon, children, defaultOpen = false }) => {
+    const [open, setOpen] = useState(defaultOpen);
+    return (
+        <div>
+            <button
+                onClick={() => setOpen(o => !o)}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'rgba(255,255,255,0.55)',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'background 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+                <span style={{ fontSize: '1rem', flexShrink: 0 }}>{icon}</span>
+                <span style={{ flex: 1, textAlign: 'left' }}>{label}</span>
+                <span style={{ fontSize: '0.75rem' }}>
+                    {open ? <FiChevronDown /> : <FiChevronRight />}
+                </span>
+            </button>
+            {open && (
+                <div style={{ paddingLeft: 12, display: 'flex', flexDirection: 'column', gap: 2, marginTop: 2 }}>
+                    {children}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const Dashboard = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -31,7 +91,7 @@ const Dashboard = () => {
             )}
 
             {/* ── Sidebar ──────────────────────────────── */}
-            <aside className={`ims-sidebar ${sidebarOpen ? 'open' : ''}`}>
+            <aside className={`ims-sidebar ${sidebarOpen ? 'open' : ''}`} style={{ overflowY: 'auto' }}>
                 {/* Logo */}
                 <div className="flex items-center justify-center py-6 border-b border-white/5">
                     <div style={{
@@ -47,13 +107,65 @@ const Dashboard = () => {
 
                 {/* Nav links */}
                 <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+
+                    {/* ── Overview ── */}
+                    <SectionLabel label="Overview" />
                     <LinkComponents to={''} icon={<MdSpaceDashboard />} name={'Dashboard'} />
-                    <LinkComponents to={'products'} icon={<MdInventory />} name={'Products'} />
-                    <LinkComponents to={'customers'} icon={<FiUsers />} name={'Customers'} />
-                    <LinkComponents to={'orders'} icon={<RiShoppingCartFill />} name={'Orders'} />
                     <LinkComponents to={'analytics'} icon={<MdAnalytics />} name={'Analytics'} />
 
-                    {/* Spacer to push Settings & Logout to the bottom */}
+                    {/* ── Inventory ── */}
+                    <SectionLabel label="Inventory" />
+                    <CollapsibleSection label="Products" icon={<MdInventory />} defaultOpen={true}>
+                        <LinkComponents to={'products'} icon={<FiPackage />} name={'General Stock'} />
+                        <LinkComponents to={'pharmacy-products'} icon={<MdMedicalServices />} name={'Pharmacy Stock'} />
+                        <LinkComponents to={'non-pharmacy-products'} icon={<FiPackage />} name={'Supplies Stock'} />
+                    </CollapsibleSection>
+
+                    <CollapsibleSection label="Purchase" icon={<FiShoppingBag />}>
+                        <LinkComponents to={'purchase-pharmacy'} icon={<MdMedicalServices />} name={'Pharmacy Purchase'} />
+                        <LinkComponents to={'purchase-non-pharmacy'} icon={<FiPackage />} name={'Supplies Purchase'} />
+                    </CollapsibleSection>
+
+                    <CollapsibleSection label="Returns" icon={<FiRepeat />}>
+                        <LinkComponents to={'returns-customers'} icon={<FiUsers />} name={'Customer Returns'} />
+                        <LinkComponents to={'returns-expires-damages'} icon={<FiAlertCircle />} name={'Expires / Damages'} />
+                    </CollapsibleSection>
+
+                    <CollapsibleSection label="Requested Items" icon={<FiArrowLeftCircle />}>
+                        <LinkComponents to={'requested-pharmacy'} icon={<MdMedicalServices />} name={'Pharmacy Items'} />
+                        <LinkComponents to={'requested-non-pharmacy'} icon={<FiPackage />} name={'Supplies Items'} />
+                    </CollapsibleSection>
+
+                    {/* ── Sales ── */}
+                    <SectionLabel label="Sales" />
+                    <CollapsibleSection label="Orders" icon={<RiShoppingCartFill />} defaultOpen={true}>
+                        <LinkComponents to={'orders'} icon={<FiFileText />} name={'General Orders'} />
+                        <LinkComponents to={'pharmacy-orders'} icon={<MdMedicalServices />} name={'Pharmacy Orders'} />
+                        <LinkComponents to={'non-pharmacy-orders'} icon={<FiPackage />} name={'Supplies Orders'} />
+                    </CollapsibleSection>
+                    <LinkComponents to={'customers'} icon={<FiUsers />} name={'Customers'} />
+
+                    {/* ── Suppliers ── */}
+                    <SectionLabel label="Suppliers" />
+                    <CollapsibleSection label="Suppliers" icon={<FiTruck />}>
+                        <LinkComponents to={'suppliers'} icon={<FiTruck />} name={'Supplier List'} />
+                        <LinkComponents to={'suppliers-documents'} icon={<FiFileText />} name={'Documents'} />
+                        <LinkComponents to={'suppliers-payments'} icon={<FiDollarSign />} name={'Payments'} />
+                    </CollapsibleSection>
+
+                    {/* ── HR ── */}
+                    <SectionLabel label="HR" />
+                    <LinkComponents to={'employees'} icon={<FiBriefcase />} name={'Employees'} />
+
+                    {/* ── Configuration ── */}
+                    <SectionLabel label="Setup" />
+                    <CollapsibleSection label="Setup" icon={<RiSettings5Fill />}>
+                        <LinkComponents to={'setup-categories'} icon={<MdOutlineCategory />} name={'Categories'} />
+                        <LinkComponents to={'setup-companies'} icon={<MdBusiness />} name={'Companies'} />
+                        <LinkComponents to={'setup-unit-types'} icon={<FiPackage />} name={'Unit Types'} />
+                    </CollapsibleSection>
+
+                    {/* Settings (bottom) */}
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
                         <LinkComponents to={'/settings'} icon={<RiSettings5Fill />} name={'Settings'} />
                     </div>
@@ -81,7 +193,6 @@ const Dashboard = () => {
                         <button className="ims-btn ims-btn-ghost ims-btn-icon relative" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'transparent' }}>
                             <FiMessageSquare size={18} />
                         </button>
-
 
                         {/* User Profile dropdown */}
                         <div className="dropdown dropdown-end">

@@ -21,8 +21,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="AP Solutions Inventory & Order Management System API",
-    description="Backend API for managing products, customers, and orders with automated inventory tracking",
-    version="1.0.0",
+    description="Backend API for managing products, customers, orders and pharmacy inventory",
+    version="2.0.0",
     lifespan=lifespan
 )
 
@@ -41,7 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- AUTH ENDPOINTS ---
+# ── AUTH ENDPOINTS ─────────────────────────────────────────────────────────────
 
 @app.post("/auth/register", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -92,7 +92,7 @@ def reset_password(req: schemas.ResetPasswordRequest, db: Session = Depends(get_
     return {"message": "Password updated successfully."}
 
 
-# --- PRODUCTS ENDPOINTS ---
+# ── PRODUCTS ENDPOINTS (existing) ──────────────────────────────────────────────
 
 @app.post("/products", response_model=schemas.ProductResponse, status_code=status.HTTP_201_CREATED)
 def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
@@ -200,7 +200,7 @@ def delete_product(product_id: int, db: Session = Depends(get_db), current_user:
     return None
 
 
-# --- CUSTOMERS ENDPOINTS ---
+# ── CUSTOMERS ENDPOINTS (existing) ─────────────────────────────────────────────
 
 @app.post("/customers", response_model=schemas.CustomerResponse, status_code=status.HTTP_201_CREATED)
 def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
@@ -253,7 +253,7 @@ def delete_customer(customer_id: int, db: Session = Depends(get_db), current_use
     return None
 
 
-# --- ORDERS ENDPOINTS ---
+# ── ORDERS ENDPOINTS (existing) ────────────────────────────────────────────────
 
 @app.post("/orders", response_model=schemas.OrderResponse, status_code=status.HTTP_201_CREATED)
 def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
@@ -407,7 +407,9 @@ def cancel_order(order_id: int, db: Session = Depends(get_db), current_user: mod
         )
     return None
 
-# --- DASHBOARD SUMMARY ENDPOINT ---
+
+# ── DASHBOARD SUMMARY ENDPOINT (existing) ──────────────────────────────────────
+
 @app.get("/dashboard/summary")
 def get_dashboard_summary(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     total_products = db.query(models.Product).count()
@@ -435,7 +437,9 @@ def get_dashboard_summary(db: Session = Depends(get_db), current_user: models.Us
         "low_stock_products": low_stock_list
     }
 
-# --- DASHBOARD ANALYTICS ENDPOINT ---
+
+# ── DASHBOARD ANALYTICS ENDPOINT (existing) ────────────────────────────────────
+
 @app.get("/dashboard/analytics")
 def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     from sqlalchemy import func
@@ -508,3 +512,375 @@ def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.
         "stock_distribution": stock_distribution,
         "top_customers": top_customers
     }
+
+
+# ── SETUP: CATEGORIES ──────────────────────────────────────────────────────────
+
+@app.get("/setup/categories", response_model=List[schemas.CategoryResponse])
+def get_categories(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Category).all()
+
+@app.post("/setup/categories", response_model=schemas.CategoryResponse, status_code=status.HTTP_201_CREATED)
+def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_cat = models.Category(**category.model_dump())
+    db.add(new_cat)
+    db.commit()
+    db.refresh(new_cat)
+    return new_cat
+
+@app.delete("/setup/categories/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_category(category_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    cat = db.query(models.Category).filter(models.Category.id == category_id).first()
+    if not cat:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found.")
+    db.delete(cat)
+    db.commit()
+    return None
+
+
+# ── SETUP: COMPANIES ───────────────────────────────────────────────────────────
+
+@app.get("/setup/companies", response_model=List[schemas.CompanyResponse])
+def get_companies(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Company).all()
+
+@app.post("/setup/companies", response_model=schemas.CompanyResponse, status_code=status.HTTP_201_CREATED)
+def create_company(company: schemas.CompanyCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_co = models.Company(**company.model_dump())
+    db.add(new_co)
+    db.commit()
+    db.refresh(new_co)
+    return new_co
+
+@app.delete("/setup/companies/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_company(company_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    co = db.query(models.Company).filter(models.Company.id == company_id).first()
+    if not co:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
+    db.delete(co)
+    db.commit()
+    return None
+
+
+# ── SETUP: UNIT TYPES ──────────────────────────────────────────────────────────
+
+@app.get("/setup/unitTypes", response_model=List[schemas.UnitTypeResponse])
+def get_unit_types(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.UnitType).all()
+
+@app.post("/setup/unitTypes", response_model=schemas.UnitTypeResponse, status_code=status.HTTP_201_CREATED)
+def create_unit_type(unit_type: schemas.UnitTypeCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_ut = models.UnitType(**unit_type.model_dump())
+    db.add(new_ut)
+    db.commit()
+    db.refresh(new_ut)
+    return new_ut
+
+@app.delete("/setup/unitTypes/{unit_type_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_unit_type(unit_type_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    ut = db.query(models.UnitType).filter(models.UnitType.id == unit_type_id).first()
+    if not ut:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unit type not found.")
+    db.delete(ut)
+    db.commit()
+    return None
+
+
+# ── SUPPLIERS: LIST ────────────────────────────────────────────────────────────
+
+@app.get("/suppliers/lists", response_model=List[schemas.SupplierResponse])
+def get_suppliers(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Supplier).all()
+
+@app.post("/suppliers/lists", response_model=schemas.SupplierResponse, status_code=status.HTTP_201_CREATED)
+def create_supplier(supplier: schemas.SupplierCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_sup = models.Supplier(**supplier.model_dump())
+    db.add(new_sup)
+    db.commit()
+    db.refresh(new_sup)
+    return new_sup
+
+@app.delete("/suppliers/lists/{supplier_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_supplier(supplier_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    sup = db.query(models.Supplier).filter(models.Supplier.id == supplier_id).first()
+    if not sup:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Supplier not found.")
+    db.delete(sup)
+    db.commit()
+    return None
+
+
+# ── SUPPLIERS: DOCUMENTS ───────────────────────────────────────────────────────
+
+@app.get("/suppliers/documents", response_model=List[schemas.SupplierDocumentResponse])
+def get_supplier_documents(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.SupplierDocument).all()
+
+@app.post("/suppliers/documents", response_model=schemas.SupplierDocumentResponse, status_code=status.HTTP_201_CREATED)
+def create_supplier_document(doc: schemas.SupplierDocumentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_doc = models.SupplierDocument(**doc.model_dump())
+    db.add(new_doc)
+    db.commit()
+    db.refresh(new_doc)
+    return new_doc
+
+@app.delete("/suppliers/documents/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_supplier_document(doc_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    doc = db.query(models.SupplierDocument).filter(models.SupplierDocument.id == doc_id).first()
+    if not doc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found.")
+    db.delete(doc)
+    db.commit()
+    return None
+
+
+# ── SUPPLIERS: PAYMENTS ────────────────────────────────────────────────────────
+
+@app.get("/suppliers/payments", response_model=List[schemas.SupplierPaymentResponse])
+def get_supplier_payments(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.SupplierPayment).all()
+
+@app.post("/suppliers/payments", response_model=schemas.SupplierPaymentResponse, status_code=status.HTTP_201_CREATED)
+def create_supplier_payment(payment: schemas.SupplierPaymentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_pay = models.SupplierPayment(**payment.model_dump())
+    db.add(new_pay)
+    db.commit()
+    db.refresh(new_pay)
+    return new_pay
+
+@app.delete("/suppliers/payments/{payment_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_supplier_payment(payment_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    pay = db.query(models.SupplierPayment).filter(models.SupplierPayment.id == payment_id).first()
+    if not pay:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found.")
+    db.delete(pay)
+    db.commit()
+    return None
+
+
+# ── PHARMACY PRODUCTS (main stock) ─────────────────────────────────────────────
+
+@app.get("/products/main", response_model=List[schemas.PharmacyProductResponse])
+def get_pharmacy_products(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.PharmacyProduct).all()
+
+@app.post("/products/main", response_model=schemas.PharmacyProductResponse, status_code=status.HTTP_201_CREATED)
+def create_pharmacy_product(product: schemas.PharmacyProductCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_prod = models.PharmacyProduct(**product.model_dump())
+    db.add(new_prod)
+    db.commit()
+    db.refresh(new_prod)
+    return new_prod
+
+@app.delete("/products/main/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_pharmacy_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    prod = db.query(models.PharmacyProduct).filter(models.PharmacyProduct.id == product_id).first()
+    if not prod:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Pharmacy product not found.")
+    db.delete(prod)
+    db.commit()
+    return None
+
+
+# ── NON-PHARMACY PRODUCTS (supplies stock) ─────────────────────────────────────
+
+@app.get("/products/supplies", response_model=List[schemas.PharmacyProductResponse])
+def get_non_pharmacy_products(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.NonPharmacyProduct).all()
+
+@app.post("/products/supplies", response_model=schemas.PharmacyProductResponse, status_code=status.HTTP_201_CREATED)
+def create_non_pharmacy_product(product: schemas.PharmacyProductCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_prod = models.NonPharmacyProduct(**product.model_dump())
+    db.add(new_prod)
+    db.commit()
+    db.refresh(new_prod)
+    return new_prod
+
+@app.delete("/products/supplies/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_non_pharmacy_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    prod = db.query(models.NonPharmacyProduct).filter(models.NonPharmacyProduct.id == product_id).first()
+    if not prod:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Non-pharmacy product not found.")
+    db.delete(prod)
+    db.commit()
+    return None
+
+
+# ── PURCHASES: PHARMACY (main) ─────────────────────────────────────────────────
+
+@app.get("/purchases/main", response_model=List[schemas.PurchaseResponse])
+def get_pharmacy_purchases(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Purchase).filter(models.Purchase.product_type == "main").all()
+
+@app.post("/purchases/main", response_model=schemas.PurchaseResponse, status_code=status.HTTP_201_CREATED)
+def create_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    data = purchase.model_dump()
+    data["product_type"] = "main"
+    new_purchase = models.Purchase(**data)
+    db.add(new_purchase)
+    db.commit()
+    db.refresh(new_purchase)
+    return new_purchase
+
+@app.delete("/purchases/main/{purchase_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    p = db.query(models.Purchase).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "main").first()
+    if not p:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Purchase not found.")
+    db.delete(p)
+    db.commit()
+    return None
+
+
+# ── PURCHASES: NON-PHARMACY (supplies) ────────────────────────────────────────
+
+@app.get("/purchases/supplies", response_model=List[schemas.PurchaseResponse])
+def get_non_pharmacy_purchases(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Purchase).filter(models.Purchase.product_type == "supplies").all()
+
+@app.post("/purchases/supplies", response_model=schemas.PurchaseResponse, status_code=status.HTTP_201_CREATED)
+def create_non_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    data = purchase.model_dump()
+    data["product_type"] = "supplies"
+    new_purchase = models.Purchase(**data)
+    db.add(new_purchase)
+    db.commit()
+    db.refresh(new_purchase)
+    return new_purchase
+
+@app.delete("/purchases/supplies/{purchase_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_non_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    p = db.query(models.Purchase).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "supplies").first()
+    if not p:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Purchase not found.")
+    db.delete(p)
+    db.commit()
+    return None
+
+
+# ── RETURNS: CUSTOMERS ─────────────────────────────────────────────────────────
+
+@app.get("/returns/customers", response_model=List[schemas.ReturnResponse])
+def get_customer_returns(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Return).filter(models.Return.return_type == "customers").all()
+
+@app.post("/returns/customers", response_model=schemas.ReturnResponse, status_code=status.HTTP_201_CREATED)
+def create_customer_return(ret: schemas.ReturnCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    data = ret.model_dump()
+    data["return_type"] = "customers"
+    new_ret = models.Return(**data)
+    db.add(new_ret)
+    db.commit()
+    db.refresh(new_ret)
+    return new_ret
+
+@app.delete("/returns/customers/{return_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_customer_return(return_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    r = db.query(models.Return).filter(models.Return.id == return_id, models.Return.return_type == "customers").first()
+    if not r:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Return not found.")
+    db.delete(r)
+    db.commit()
+    return None
+
+
+# ── RETURNS: EXPIRES OR DAMAGES ────────────────────────────────────────────────
+
+@app.get("/returns/expiresOrDamages", response_model=List[schemas.ReturnResponse])
+def get_expires_damages_returns(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Return).filter(models.Return.return_type == "expiresOrDamages").all()
+
+@app.post("/returns/expiresOrDamages", response_model=schemas.ReturnResponse, status_code=status.HTTP_201_CREATED)
+def create_expires_damages_return(ret: schemas.ReturnCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    data = ret.model_dump()
+    data["return_type"] = "expiresOrDamages"
+    new_ret = models.Return(**data)
+    db.add(new_ret)
+    db.commit()
+    db.refresh(new_ret)
+    return new_ret
+
+@app.delete("/returns/expiresOrDamages/{return_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_expires_damages_return(return_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    r = db.query(models.Return).filter(models.Return.id == return_id, models.Return.return_type == "expiresOrDamages").first()
+    if not r:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Return not found.")
+    db.delete(r)
+    db.commit()
+    return None
+
+
+# ── REQUESTED ITEMS: PHARMACY (main) ───────────────────────────────────────────
+
+@app.get("/requestedItems/main", response_model=List[schemas.RequestedItemResponse])
+def get_pharmacy_requested_items(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.RequestedItem).filter(models.RequestedItem.item_type == "main").all()
+
+@app.post("/requestedItems/main", response_model=schemas.RequestedItemResponse, status_code=status.HTTP_201_CREATED)
+def create_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    data = item.model_dump()
+    data["item_type"] = "main"
+    new_item = models.RequestedItem(**data)
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+    return new_item
+
+@app.delete("/requestedItems/main/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_pharmacy_requested_item(item_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    it = db.query(models.RequestedItem).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "main").first()
+    if not it:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested item not found.")
+    db.delete(it)
+    db.commit()
+    return None
+
+
+# ── REQUESTED ITEMS: NON-PHARMACY (supplies) ───────────────────────────────────
+
+@app.get("/requestedItems/supplies", response_model=List[schemas.RequestedItemResponse])
+def get_non_pharmacy_requested_items(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.RequestedItem).filter(models.RequestedItem.item_type == "supplies").all()
+
+@app.post("/requestedItems/supplies", response_model=schemas.RequestedItemResponse, status_code=status.HTTP_201_CREATED)
+def create_non_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    data = item.model_dump()
+    data["item_type"] = "supplies"
+    new_item = models.RequestedItem(**data)
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+    return new_item
+
+@app.delete("/requestedItems/supplies/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_non_pharmacy_requested_item(item_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    it = db.query(models.RequestedItem).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "supplies").first()
+    if not it:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested item not found.")
+    db.delete(it)
+    db.commit()
+    return None
+
+
+# ── EMPLOYEES ──────────────────────────────────────────────────────────────────
+
+@app.get("/employees", response_model=List[schemas.EmployeeResponse])
+def get_employees(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    return db.query(models.Employee).all()
+
+@app.post("/employees", response_model=schemas.EmployeeResponse, status_code=status.HTTP_201_CREATED)
+def create_employee(employee: schemas.EmployeeCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    new_emp = models.Employee(**employee.model_dump())
+    db.add(new_emp)
+    db.commit()
+    db.refresh(new_emp)
+    return new_emp
+
+@app.delete("/employees/{employee_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_employee(employee_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    emp = db.query(models.Employee).filter(models.Employee.id == employee_id).first()
+    if not emp:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found.")
+    db.delete(emp)
+    db.commit()
+    return None
