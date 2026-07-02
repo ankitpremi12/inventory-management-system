@@ -12,16 +12,6 @@ import {
 } from 'react-icons/fi';
 import LinkComponents from '../../components/navbar/LinkComponents';
 
-const CubeLogo = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Top face */}
-        <path d="M12 2.5L20.5 7L12 11.5L3.5 7L12 2.5Z" fill="#ebdcd0" stroke="#0f283c" strokeWidth="1.5" strokeLinejoin="round" />
-        {/* Left face */}
-        <path d="M3.5 7V16.5L12 21V11.5L3.5 7Z" fill="#0f283c" stroke="#0f283c" strokeWidth="1.5" strokeLinejoin="round" />
-        {/* Right face */}
-        <path d="M12 11.5V21L20.5 16.5V7L12 11.5Z" fill="#1e3a8a" stroke="#0f283c" strokeWidth="1.5" strokeLinejoin="round" />
-    </svg>
-);
 
 const SectionLabel = ({ label }) => (
     <div style={{

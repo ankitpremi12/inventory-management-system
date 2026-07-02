@@ -457,7 +457,9 @@ def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.
         func.date(models.Order.created_at).label("date"),
         func.sum(models.Order.total_amount).label("revenue"),
         func.count(models.Order.id).label("orders_count")
-    ).group_by(func.date(models.Order.created_at)).order_by(func.date(models.Order.created_at)).all()
+    ).filter(models.Order.owner_id == current_user.id)\
+     .group_by(func.date(models.Order.created_at))\
+     .order_by(func.date(models.Order.created_at)).all()
     
     sales_over_time = []
     for row in sales_query:
@@ -473,6 +475,7 @@ def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.
         func.sum(models.OrderItem.quantity).label("units_sold"),
         func.sum(models.OrderItem.quantity * models.OrderItem.price_at_order).label("revenue")
     ).join(models.OrderItem, models.Product.id == models.OrderItem.product_id)\
+     .filter(models.Product.owner_id == current_user.id)\
      .group_by(models.Product.id)\
      .order_by(func.sum(models.OrderItem.quantity).desc())\
      .limit(5).all()
@@ -502,6 +505,7 @@ def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.
         func.count(models.Order.id).label("orders_count"),
         func.sum(models.Order.total_amount).label("total_spent")
     ).join(models.Order, models.Customer.id == models.Order.customer_id)\
+     .filter(models.Customer.owner_id == current_user.id)\
      .group_by(models.Customer.id)\
      .order_by(func.sum(models.Order.total_amount).desc())\
      .limit(5).all()
