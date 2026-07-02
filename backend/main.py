@@ -45,12 +45,6 @@ from fastapi.responses import RedirectResponse
 
 # ── ROOT REDIRECT ─────────────────────────────────────────────────────────────
 
-@app.get("/api/setup/danger-reset-db")
-def danger_reset_db():
-    models.Base.metadata.drop_all(bind=engine)
-    models.Base.metadata.create_all(bind=engine)
-    return {"message": "Database completely reset and recreated"}
-
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/docs")
