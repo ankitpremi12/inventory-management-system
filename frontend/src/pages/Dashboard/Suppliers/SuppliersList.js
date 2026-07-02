@@ -67,8 +67,8 @@ const SuppliersList = () => {
     const deleteSupplier = (id, name) => {
         if (!window.confirm(`Delete supplier "${name}"?`)) return;
         fetch(`${BASE}/suppliers/lists/${id}`, { method: 'DELETE' })
-            .then(res => res.json())
-            .then(() => {
+            .then(res => {
+                if (!res.ok) throw new Error('Delete failed');
                 toast.success(`${name} deleted.`);
                 setRefreshTrigger(n => n + 1);
             })
@@ -151,7 +151,7 @@ const SuppliersList = () => {
                             </tr>
                         ) : (
                             suppliers.map((supplier, index) => (
-                                <tr key={supplier._id} className="ims-table-row">
+                                <tr key={supplier.id} className="ims-table-row">
                                     <td style={{ paddingLeft: 16, fontWeight: 700 }}>{index + 1}</td>
                                     <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{supplier.name}</td>
                                     <td>{supplier.phone}</td>
@@ -170,7 +170,7 @@ const SuppliersList = () => {
                                                 <FiEdit2 size={15} style={{ color: 'var(--text-secondary)' }} />
                                             </button>
                                             <button
-                                                onClick={() => deleteSupplier(supplier._id, supplier.name)}
+                                                onClick={() => deleteSupplier(supplier.id, supplier.name)}
                                                 className="ims-btn ims-btn-ghost ims-btn-icon"
                                                 style={{ background: 'transparent', borderColor: 'transparent', padding: 4 }}
                                             >

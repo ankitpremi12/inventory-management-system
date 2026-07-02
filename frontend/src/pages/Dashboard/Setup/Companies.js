@@ -40,7 +40,6 @@ const Companies = () => {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(productDetails)
         })
-            .then(res => res.json())
             .then(() => {
                 toast(<AddModal name={name} />);
                 setRefreshTrigger(prev => prev + 1);
@@ -134,7 +133,7 @@ const Companies = () => {
                     </thead>
                     <tbody>
                         {companies.map((company, index) => (
-                            <tr key={company._id} className="ims-table-row">
+                            <tr key={company.id} className="ims-table-row">
                                 <td style={{ paddingLeft: 16, fontWeight: 700 }}>{index + 1}</td>
                                 <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{company.name}</td>
                                 <td>{company.phone}</td>
@@ -149,7 +148,7 @@ const Companies = () => {
                                             <FiEdit2 size={15} style={{ color: 'var(--text-secondary)' }} />
                                         </button>
                                         <button
-                                            onClick={() => deleteCompany(company._id, company.name)}
+                                            onClick={() => deleteCompany(company.id, company.name)}
                                             className="ims-btn ims-btn-ghost ims-btn-icon"
                                             style={{ background: 'transparent', borderColor: 'transparent', padding: 4 }}
                                         >

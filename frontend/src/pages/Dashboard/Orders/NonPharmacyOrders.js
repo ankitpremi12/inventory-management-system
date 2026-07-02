@@ -68,8 +68,11 @@ const NonPharmacyOrders = () => {
     const deleteOrder = (id) => {
         if (!window.confirm('Delete this order?')) return;
         fetch(`${BASE}/orders/supplies/${id}`, { method: 'DELETE' })
-            .then(r => r.json())
-            .then(() => { toast.success('Order deleted.'); setRefreshTrigger(n => n + 1); })
+            .then(res => {
+                if (!res.ok) throw new Error('Delete failed');
+                toast.success('Order deleted.');
+                setRefreshTrigger(n => n + 1);
+            })
             .catch(() => toast.error('Failed to delete order.'));
     };
 
@@ -161,7 +164,7 @@ const NonPharmacyOrders = () => {
                             </tr>
                         ) : (
                             orders.map((order, index) => (
-                                <tr key={order._id} className="ims-table-row">
+                                <tr key={order.id} className="ims-table-row">
                                     <td style={{ paddingLeft: 16, fontWeight: 700 }}>{index + 1}</td>
                                     <td style={{ fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'monospace', fontSize: '0.8rem' }}>{order.voucher || '—'}</td>
                                     <td>{order.supplier}</td>
@@ -182,7 +185,7 @@ const NonPharmacyOrders = () => {
                                                 <FiPrinter size={14} style={{ color: 'var(--text-secondary)' }} />
                                             </button>
                                             <button
-                                                onClick={() => deleteOrder(order._id)}
+                                                onClick={() => deleteOrder(order.id)}
                                                 className="ims-btn ims-btn-ghost ims-btn-icon"
                                                 style={{ background: 'transparent', borderColor: 'transparent', padding: 4 }}
                                             >

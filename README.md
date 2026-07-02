@@ -2,6 +2,9 @@
 
 AP Solutions is a production-ready, full-stack, containerized **Inventory & Order Management System** built with **FastAPI**, **PostgreSQL**, and **React**. The entire system is structured for simple orchestration using Docker Compose and prepared for free-tier cloud deployment.
 
+> [!NOTE]
+> **Access & Authentication:** Currently, this system provides open registration to demonstrate working functionality and workflows. Anyone can register and view the data. For a true production environment, access can easily be held or restricted by disabling open registration and introducing role-based access control (RBAC).
+
 ---
 
 ## 🔗 Project Links

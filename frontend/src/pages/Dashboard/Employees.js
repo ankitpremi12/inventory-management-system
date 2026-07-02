@@ -46,7 +46,6 @@ const Employees = () => {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ name, phone, website, email, address, addedBy, addedTime, updatedBy, updatedTime }),
         })
-            .then(res => res.json())
             .then(() => {
                 toast(<AddModal name={name} />);
                 fetchEmployees();
@@ -100,7 +99,7 @@ const Employees = () => {
                         ) : (
                             employees.map((employee, index) => (
                                 <TableRow
-                                    key={employee._id}
+                                    key={employee.id}
                                     tableRowsData={[
                                         index + 1,
                                         employee.name,
@@ -116,7 +115,7 @@ const Employees = () => {
                                             <EditButton />
                                             <DeleteButton
                                                 deleteApiLink="/employees/"
-                                                itemId={employee._id}
+                                                itemId={employee.id}
                                                 name={employee.name}
                                             />
                                         </span>,

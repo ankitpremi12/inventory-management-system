@@ -37,7 +37,6 @@ const Categories = () => {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(categoryDetails)
         })
-            .then(res => res.json())
             .then(() => {
                 toast(<AddModal name={name} />);
                 setRefreshTrigger(prev => prev + 1);
@@ -125,7 +124,7 @@ const Categories = () => {
                     </thead>
                     <tbody>
                         {categories.map((category, index) => (
-                            <tr key={category._id} className="ims-table-row">
+                            <tr key={category.id} className="ims-table-row">
                                 <td style={{ paddingLeft: 16, fontWeight: 700 }}>{index + 1}</td>
                                 <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{category.name}</td>
                                 <td style={{ color: 'var(--text-secondary)' }}>{category.description}</td>
@@ -137,7 +136,7 @@ const Categories = () => {
                                             <FiEdit2 size={15} style={{ color: 'var(--text-secondary)' }} />
                                         </button>
                                         <button
-                                            onClick={() => deleteCategory(category._id, category.name)}
+                                            onClick={() => deleteCategory(category.id, category.name)}
                                             className="ims-btn ims-btn-ghost ims-btn-icon"
                                             style={{ background: 'transparent', borderColor: 'transparent', padding: 4 }}
                                         >

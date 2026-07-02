@@ -67,8 +67,7 @@ const ExpiresOrDamagesReturns = () => {
             },
             body: JSON.stringify(productDetails)
         })
-            .then(res => res.json())
-            .then(data => {
+            .then(() => {
                 toast(
                     <AddModal name={tradeName} />
                 );
@@ -233,7 +232,7 @@ const ExpiresOrDamagesReturns = () => {
                     {
                         expiresOrDamagesReturns.map((product, index) =>
                             <TableRow
-                                key={product._id}
+                                key={product.id}
                                 tableRowsData={
                                     [
                                         index + 1,
@@ -255,7 +254,7 @@ const ExpiresOrDamagesReturns = () => {
                                             <EditButton />
                                             <DeleteButton
                                                 deleteApiLink='/returns/expiresOrDamages/'
-                                                itemId={product._id}
+                                                itemId={product.id}
                                                 name={product.tradeName} />
                                         </span>
                                     ]

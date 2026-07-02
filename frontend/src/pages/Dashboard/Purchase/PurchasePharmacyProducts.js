@@ -66,8 +66,7 @@ const PurchasePharmacyProducts = () => {
             },
             body: JSON.stringify(productDetails)
         })
-            .then(res => res.json())
-            .then(data => {
+            .then(() => {
                 toast(
                     <AddModal name='Order' />
                 );
@@ -140,7 +139,7 @@ const PurchasePharmacyProducts = () => {
                                         {
                                             pharmacyProducts.map((product, index) =>
                                                 <TableRow
-                                                    key={product._id}
+                                                    key={product.id}
                                                     tableRowsData={
                                                         [
                                                             index + 1,
@@ -173,7 +172,7 @@ const PurchasePharmacyProducts = () => {
                                         {
                                             pharmacyProducts.map((product, index) =>
                                                 <TableRow
-                                                    key={product._id}
+                                                    key={product.id}
                                                     tableRowsData={
                                                         [
                                                             index + 1,
@@ -187,7 +186,7 @@ const PurchasePharmacyProducts = () => {
                                                                 <EditButton />
                                                                 <DeleteButton
                                                                     deleteApiLink='/orders/pharmacy/'
-                                                                    itemId={'pharmacyOrder._id'} />
+                                                                    itemId={product.id} />
                                                             </span>
                                                         ]
                                                     } />)
@@ -276,7 +275,7 @@ const PurchasePharmacyProducts = () => {
                     {
                         pharmacyProducts.map((product, index) =>
                             <TableRow
-                                key={product._id}
+                                key={product.id}
                                 tableRowsData={
                                     [
                                         index + 1,
@@ -298,7 +297,7 @@ const PurchasePharmacyProducts = () => {
                                             <EditButton />
                                             <DeleteButton
                                                 deleteApiLink='/purchases/main/'
-                                                itemId={product._id}
+                                                itemId={product.id}
                                                 name={product.tradeName} />
                                         </span>
                                     ]

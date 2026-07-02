@@ -66,8 +66,7 @@ const SuppliersDocuments = () => {
             },
             body: JSON.stringify(productDetails)
         })
-            .then(res => res.json())
-            .then(data => {
+            .then(() => {
                 toast(
                     <div className="alert alert-success shadow-lg">
                         <div>
@@ -237,7 +236,7 @@ const SuppliersDocuments = () => {
                     {
                         documents.map((product, index) =>
                             <TableRow
-                                key={product._id}
+                                key={product.id}
                                 tableRowsData={
                                     [
                                         index + 1,
@@ -259,7 +258,7 @@ const SuppliersDocuments = () => {
                                             <EditButton />
                                             <DeleteButton
                                                 deleteApiLink='/suppliers/documents/'
-                                                itemId={product._id} />
+                                                itemId={product.id} />
                                         </span>
                                     ]
                                 } />)

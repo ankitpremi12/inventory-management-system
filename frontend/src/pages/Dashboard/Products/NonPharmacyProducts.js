@@ -77,7 +77,6 @@ const NonPharmacyProducts = () => {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(productDetails)
         })
-            .then(res => res.json())
             .then(() => {
                 toast(<AddModal name={tradeName} />);
                 setRefreshTrigger(prev => prev + 1);
@@ -168,7 +167,7 @@ const NonPharmacyProducts = () => {
                             style={{ borderRadius: 8, background: '#ffffff', minWidth: 120 }}
                         >
                             <option value="">Category</option>
-                            {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                            {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                         </select>
 
                         <select
@@ -315,7 +314,7 @@ const NonPharmacyProducts = () => {
                             const price = product.unitMrp ? `$${parseFloat(product.unitMrp).toFixed(2)}` : '—';
 
                             return (
-                                <tr key={product._id} className="ims-table-row">
+                                <tr key={product.id} className="ims-table-row">
                                     <td style={{ paddingLeft: 16 }}>
                                         <input type="checkbox" style={{ accentColor: '#0c223c' }} />
                                     </td>
@@ -354,7 +353,7 @@ const NonPharmacyProducts = () => {
                                                 <FiEdit2 size={15} style={{ color: 'var(--text-secondary)' }} />
                                             </button>
                                             <button
-                                                onClick={() => deleteProduct(product._id, product.tradeName)}
+                                                onClick={() => deleteProduct(product.id, product.tradeName)}
                                                 className="ims-btn ims-btn-ghost ims-btn-icon"
                                                 style={{ background: 'transparent', borderColor: 'transparent', padding: 4 }}
                                             >

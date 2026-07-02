@@ -86,34 +86,34 @@ function App() {
               <Route path="employees" element={<Employees />} />
 
               {/* Pharmacy / Non-Pharmacy Products */}
-              <Route path="pharmacy-products" element={<PharmacyProducts />} />
-              <Route path="non-pharmacy-products" element={<NonPharmacyProducts />} />
+              <Route path="products/main" element={<PharmacyProducts />} />
+              <Route path="products/supplies" element={<NonPharmacyProducts />} />
 
               {/* Orders sub-pages */}
-              <Route path="pharmacy-orders" element={<PharmacyOrders />} />
-              <Route path="non-pharmacy-orders" element={<NonPharmacyOrders />} />
+              <Route path="orders/main" element={<PharmacyOrders />} />
+              <Route path="orders/supplies" element={<NonPharmacyOrders />} />
 
               {/* Purchase */}
-              <Route path="purchase-pharmacy" element={<PurchasePharmacyProducts />} />
-              <Route path="purchase-non-pharmacy" element={<PurchaseNonPharmacyProducts />} />
+              <Route path="purchase/main" element={<PurchasePharmacyProducts />} />
+              <Route path="purchase/supplies" element={<PurchaseNonPharmacyProducts />} />
 
               {/* Returns */}
-              <Route path="returns-customers" element={<CustomersReturns />} />
-              <Route path="returns-expires-damages" element={<ExpiresOrDamagesReturns />} />
+              <Route path="returns/customers" element={<CustomersReturns />} />
+              <Route path="returns/expires-damages" element={<ExpiresOrDamagesReturns />} />
 
               {/* Requested Items */}
-              <Route path="requested-pharmacy" element={<PharmacyItems />} />
-              <Route path="requested-non-pharmacy" element={<NonPharmacyItems />} />
+              <Route path="requested-items/main" element={<PharmacyItems />} />
+              <Route path="requested-items/supplies" element={<NonPharmacyItems />} />
 
               {/* Suppliers */}
-              <Route path="suppliers" element={<SuppliersList />} />
-              <Route path="suppliers-documents" element={<SuppliersDocuments />} />
-              <Route path="suppliers-payments" element={<SuppliersPayments />} />
+              <Route path="suppliers/lists" element={<SuppliersList />} />
+              <Route path="suppliers/documents" element={<SuppliersDocuments />} />
+              <Route path="suppliers/payments" element={<SuppliersPayments />} />
 
               {/* Setup */}
-              <Route path="setup-categories" element={<Categories />} />
-              <Route path="setup-companies" element={<Companies />} />
-              <Route path="setup-unit-types" element={<UnitTypes />} />
+              <Route path="setup/categories" element={<Categories />} />
+              <Route path="setup/companies" element={<Companies />} />
+              <Route path="setup/unit-types" element={<UnitTypes />} />
 
               {/* Fallback inside dashboard */}
               <Route path="*" element={<Navigate to="" replace />} />

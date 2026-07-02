@@ -4,11 +4,11 @@ import { toast } from 'react-toastify';
 import DeleteModal from '../modals/DeleteModal';
 
 const DeleteButton = ({ deleteApiLink, itemId, name, onSuccess }) => {
-    const deleteItem = _id => {
-        const url = `${deleteApiLink}${_id}`;
+    const deleteItem = id => {
+        const url = `${deleteApiLink}${id}`;
         fetch(url, { method: 'DELETE' })
-            .then(res => res.json())
-            .then(data => {
+            .then(res => {
+                if (!res.ok) throw new Error('Delete failed');
                 toast(<DeleteModal name={name} />);
                 if (onSuccess) {
                     onSuccess();
@@ -17,8 +17,10 @@ const DeleteButton = ({ deleteApiLink, itemId, name, onSuccess }) => {
                         window.location.reload();
                     }, 800);
                 }
-            });
+            })
+            .catch(() => toast.error(`Failed to delete ${name || 'item'}.`));
     };
+
 
     return (
         <button

@@ -131,23 +131,23 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
 def get_products(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     return db.query(models.Product).all()
 
-@app.get("/products/{product_id}", response_model=schemas.ProductResponse)
+@app.get("/products/{product_id:int}", response_model=schemas.ProductResponse)
 def get_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Product with ID {product_id} not found."
+            detail=f"Product with ID {product_id:int} not found."
         )
     return product
 
-@app.put("/products/{product_id}", response_model=schemas.ProductResponse)
+@app.put("/products/{product_id:int}", response_model=schemas.ProductResponse)
 def update_product(product_id: int, product_update: schemas.ProductUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Product with ID {product_id} not found."
+            detail=f"Product with ID {product_id:int} not found."
         )
     
     update_data = product_update.model_dump(exclude_unset=True)
@@ -186,13 +186,13 @@ def update_product(product_id: int, product_update: schemas.ProductUpdate, db: S
             detail="Database integrity error during product update."
         )
 
-@app.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/products/{product_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Product with ID {product_id} not found."
+            detail=f"Product with ID {product_id:int} not found."
         )
     
     db.delete(product)
@@ -229,23 +229,23 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
 def get_customers(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     return db.query(models.Customer).all()
 
-@app.get("/customers/{customer_id}", response_model=schemas.CustomerResponse)
+@app.get("/customers/{customer_id:int}", response_model=schemas.CustomerResponse)
 def get_customer(customer_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Customer with ID {customer_id} not found."
+            detail=f"Customer with ID {customer_id:int} not found."
         )
     return customer
 
-@app.delete("/customers/{customer_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/customers/{customer_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_customer(customer_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Customer with ID {customer_id} not found."
+            detail=f"Customer with ID {customer_id:int} not found."
         )
     
     db.delete(customer)
@@ -361,13 +361,13 @@ def get_orders(db: Session = Depends(get_db), current_user: models.User = Depend
         
     return response_orders
 
-@app.get("/orders/{order_id}", response_model=schemas.OrderResponse)
+@app.get("/orders/{order_id:int}", response_model=schemas.OrderResponse)
 def get_order(order_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if not order:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Order with ID {order_id} not found."
+            detail=f"Order with ID {order_id:int} not found."
         )
         
     c_name = db.query(models.Customer.name).filter(models.Customer.id == order.customer_id).scalar()
@@ -380,13 +380,13 @@ def get_order(order_id: int, db: Session = Depends(get_db), current_user: models
         
     return resp
 
-@app.delete("/orders/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/orders/{order_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def cancel_order(order_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if not order:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Order with ID {order_id} not found."
+            detail=f"Order with ID {order_id:int} not found."
         )
         
     # Restock products inside transactional block
@@ -528,7 +528,7 @@ def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_
     db.refresh(new_cat)
     return new_cat
 
-@app.delete("/setup/categories/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/setup/categories/{category_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(category_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     cat = db.query(models.Category).filter(models.Category.id == category_id).first()
     if not cat:
@@ -552,7 +552,7 @@ def create_company(company: schemas.CompanyCreate, db: Session = Depends(get_db)
     db.refresh(new_co)
     return new_co
 
-@app.delete("/setup/companies/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/setup/companies/{company_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_company(company_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     co = db.query(models.Company).filter(models.Company.id == company_id).first()
     if not co:
@@ -576,7 +576,7 @@ def create_unit_type(unit_type: schemas.UnitTypeCreate, db: Session = Depends(ge
     db.refresh(new_ut)
     return new_ut
 
-@app.delete("/setup/unitTypes/{unit_type_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/setup/unitTypes/{unit_type_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_unit_type(unit_type_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     ut = db.query(models.UnitType).filter(models.UnitType.id == unit_type_id).first()
     if not ut:
@@ -600,7 +600,7 @@ def create_supplier(supplier: schemas.SupplierCreate, db: Session = Depends(get_
     db.refresh(new_sup)
     return new_sup
 
-@app.delete("/suppliers/lists/{supplier_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/suppliers/lists/{supplier_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_supplier(supplier_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     sup = db.query(models.Supplier).filter(models.Supplier.id == supplier_id).first()
     if not sup:
@@ -624,7 +624,7 @@ def create_supplier_document(doc: schemas.SupplierDocumentCreate, db: Session = 
     db.refresh(new_doc)
     return new_doc
 
-@app.delete("/suppliers/documents/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/suppliers/documents/{doc_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_supplier_document(doc_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     doc = db.query(models.SupplierDocument).filter(models.SupplierDocument.id == doc_id).first()
     if not doc:
@@ -648,7 +648,7 @@ def create_supplier_payment(payment: schemas.SupplierPaymentCreate, db: Session 
     db.refresh(new_pay)
     return new_pay
 
-@app.delete("/suppliers/payments/{payment_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/suppliers/payments/{payment_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_supplier_payment(payment_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     pay = db.query(models.SupplierPayment).filter(models.SupplierPayment.id == payment_id).first()
     if not pay:
@@ -672,7 +672,7 @@ def create_pharmacy_product(product: schemas.PharmacyProductCreate, db: Session 
     db.refresh(new_prod)
     return new_prod
 
-@app.delete("/products/main/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/products/main/{product_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pharmacy_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     prod = db.query(models.PharmacyProduct).filter(models.PharmacyProduct.id == product_id).first()
     if not prod:
@@ -696,7 +696,7 @@ def create_non_pharmacy_product(product: schemas.PharmacyProductCreate, db: Sess
     db.refresh(new_prod)
     return new_prod
 
-@app.delete("/products/supplies/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/products/supplies/{product_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_non_pharmacy_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     prod = db.query(models.NonPharmacyProduct).filter(models.NonPharmacyProduct.id == product_id).first()
     if not prod:
@@ -722,7 +722,7 @@ def create_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session = Dep
     db.refresh(new_purchase)
     return new_purchase
 
-@app.delete("/purchases/main/{purchase_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/purchases/main/{purchase_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     p = db.query(models.Purchase).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "main").first()
     if not p:
@@ -748,7 +748,7 @@ def create_non_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session =
     db.refresh(new_purchase)
     return new_purchase
 
-@app.delete("/purchases/supplies/{purchase_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/purchases/supplies/{purchase_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_non_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     p = db.query(models.Purchase).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "supplies").first()
     if not p:
@@ -774,7 +774,7 @@ def create_customer_return(ret: schemas.ReturnCreate, db: Session = Depends(get_
     db.refresh(new_ret)
     return new_ret
 
-@app.delete("/returns/customers/{return_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/returns/customers/{return_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_customer_return(return_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     r = db.query(models.Return).filter(models.Return.id == return_id, models.Return.return_type == "customers").first()
     if not r:
@@ -800,7 +800,7 @@ def create_expires_damages_return(ret: schemas.ReturnCreate, db: Session = Depen
     db.refresh(new_ret)
     return new_ret
 
-@app.delete("/returns/expiresOrDamages/{return_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/returns/expiresOrDamages/{return_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_expires_damages_return(return_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     r = db.query(models.Return).filter(models.Return.id == return_id, models.Return.return_type == "expiresOrDamages").first()
     if not r:
@@ -826,7 +826,7 @@ def create_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Sessio
     db.refresh(new_item)
     return new_item
 
-@app.delete("/requestedItems/main/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/requestedItems/main/{item_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pharmacy_requested_item(item_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     it = db.query(models.RequestedItem).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "main").first()
     if not it:
@@ -852,7 +852,7 @@ def create_non_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Se
     db.refresh(new_item)
     return new_item
 
-@app.delete("/requestedItems/supplies/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/requestedItems/supplies/{item_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_non_pharmacy_requested_item(item_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     it = db.query(models.RequestedItem).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "supplies").first()
     if not it:
@@ -876,7 +876,7 @@ def create_employee(employee: schemas.EmployeeCreate, db: Session = Depends(get_
     db.refresh(new_emp)
     return new_emp
 
-@app.delete("/employees/{employee_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/employees/{employee_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_employee(employee_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     emp = db.query(models.Employee).filter(models.Employee.id == employee_id).first()
     if not emp:

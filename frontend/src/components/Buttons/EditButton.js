@@ -59,8 +59,7 @@ const EditButton = ({ id }) => {
             },
             body: JSON.stringify(productDetails)
         })
-            .then(res => res.json())
-            .then(data => {
+            .then(() => {
                 toast(
                     <div className="alert alert-success shadow-lg">
                         <div>

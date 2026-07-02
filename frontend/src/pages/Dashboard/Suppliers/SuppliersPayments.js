@@ -120,7 +120,7 @@ const SuppliersPayments = () => {
                     {
                         suppliersPayments.map((product, index) =>
                             <TableRow
-                                key={product._id}
+                                key={product.id}
                                 tableRowsData={
                                     [
                                         index + 1,

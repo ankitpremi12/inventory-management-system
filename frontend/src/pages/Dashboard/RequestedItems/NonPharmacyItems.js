@@ -67,8 +67,7 @@ const NonPharmacyItems = () => {
             },
             body: JSON.stringify(productDetails)
         })
-            .then(res => res.json())
-            .then(data => {
+            .then(() => {
                 toast(
                     <AddModal name={tradeName} />
                 );
@@ -233,7 +232,7 @@ const NonPharmacyItems = () => {
                     {
                         nonPharmacyRequestedItems.map((product, index) =>
                             <TableRow
-                                key={product._id}
+                                key={product.id}
                                 tableRowsData={
                                     [
                                         index + 1,
@@ -255,7 +254,7 @@ const NonPharmacyItems = () => {
                                             <EditButton />
                                             <DeleteButton
                                                 deleteApiLink='/requestedItems/supplies/'
-                                                itemId={product._id}
+                                                itemId={product.id}
                                                 name={product.tradeName} />
                                         </span>
                                     ]

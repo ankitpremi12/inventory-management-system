@@ -30,8 +30,15 @@ export const fetchJson = async (endpoint, options = {}) => {
   
   if (response.status === 401) {
     localStorage.removeItem('token');
-    window.location.href = '/login';
-    throw new Error('Unauthorized');
+    
+    // Only redirect if not already on the login page
+    if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+    }
+
+    // Attempt to extract FastAPI error message (usually in 'detail' field)
+    const errorMsg = data?.detail || data?.message || 'Unauthorized';
+    throw new Error(errorMsg);
   }
 
   if (!response.ok) {

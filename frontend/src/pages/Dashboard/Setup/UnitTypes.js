@@ -37,7 +37,6 @@ const UnitTypes = () => {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(unitTypeDetails)
         })
-            .then(res => res.json())
             .then(() => {
                 toast(<AddModal name={name} />);
                 setRefreshTrigger(prev => prev + 1);
@@ -125,7 +124,7 @@ const UnitTypes = () => {
                     </thead>
                     <tbody>
                         {unitTypes.map((unit, index) => (
-                            <tr key={unit._id} className="ims-table-row">
+                            <tr key={unit.id} className="ims-table-row">
                                 <td style={{ paddingLeft: 16, fontWeight: 700 }}>{index + 1}</td>
                                 <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{unit.name}</td>
                                 <td style={{ color: 'var(--text-secondary)' }}>{unit.description}</td>
@@ -137,7 +136,7 @@ const UnitTypes = () => {
                                             <FiEdit2 size={15} style={{ color: 'var(--text-secondary)' }} />
                                         </button>
                                         <button
-                                            onClick={() => deleteUnitType(unit._id, unit.name)}
+                                            onClick={() => deleteUnitType(unit.id, unit.name)}
                                             className="ims-btn ims-btn-ghost ims-btn-icon"
                                             style={{ background: 'transparent', borderColor: 'transparent', padding: 4 }}
                                         >
