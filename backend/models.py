@@ -20,7 +20,6 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     sku = Column(String(100), index=True, nullable=True)
     price = Column(Numeric(10, 2), nullable=False)
@@ -34,7 +33,6 @@ class Customer(Base):
     __tablename__ = "customers"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     phone = Column(String(50), nullable=False)
@@ -43,7 +41,6 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     customer_id = Column(Integer, ForeignKey("customers.id", ondelete="CASCADE"), nullable=False)
     total_amount = Column(Numeric(10, 2), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -56,7 +53,6 @@ class OrderItem(Base):
     __tablename__ = "order_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     quantity = Column(Integer, nullable=False)
@@ -77,7 +73,6 @@ class Category(Base):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     addedBy = Column(String(100), nullable=True)
@@ -90,7 +85,6 @@ class Company(Base):
     __tablename__ = "companies"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     addedBy = Column(String(100), nullable=True)
@@ -103,7 +97,6 @@ class UnitType(Base):
     __tablename__ = "unit_types"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     addedBy = Column(String(100), nullable=True)
@@ -118,7 +111,6 @@ class Supplier(Base):
     __tablename__ = "suppliers"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     phone = Column(String(100), nullable=True)
     website = Column(String(255), nullable=True)
@@ -137,7 +129,6 @@ class SupplierDocument(Base):
     __tablename__ = "supplier_documents"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     supplier_id = Column(Integer, ForeignKey("suppliers.id", ondelete="CASCADE"), nullable=True)
     documentName = Column(String(255), nullable=True)
     documentType = Column(String(100), nullable=True)
@@ -154,7 +145,6 @@ class SupplierPayment(Base):
     __tablename__ = "supplier_payments"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     supplier_id = Column(Integer, ForeignKey("suppliers.id", ondelete="CASCADE"), nullable=True)
     due = Column(Numeric(12, 2), nullable=True, default=0)
     paid = Column(Numeric(12, 2), nullable=True, default=0)
@@ -176,7 +166,6 @@ class PharmacyProduct(Base):
     __tablename__ = "pharmacy_products"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     tradeName = Column(String(255), nullable=False)
     genericName = Column(String(255), nullable=True)
     strength = Column(String(100), nullable=True)
@@ -209,7 +198,6 @@ class NonPharmacyProduct(Base):
     __tablename__ = "non_pharmacy_products"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     tradeName = Column(String(255), nullable=False)
     genericName = Column(String(255), nullable=True)
     strength = Column(String(100), nullable=True)
@@ -244,7 +232,6 @@ class Purchase(Base):
     __tablename__ = "purchases"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     product_type = Column(String(20), nullable=False, default="main")  # 'main' | 'supplies'
     supplier = Column(String(255), nullable=True)
     tradeName = Column(String(255), nullable=True)
@@ -263,7 +250,6 @@ class Return(Base):
     __tablename__ = "returns"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     return_type = Column(String(30), nullable=False, default="customers")  # 'customers' | 'expiresOrDamages'
     tradeName = Column(String(255), nullable=True)
     genericName = Column(String(255), nullable=True)
@@ -299,7 +285,6 @@ class RequestedItem(Base):
     __tablename__ = "requested_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     item_type = Column(String(20), nullable=False, default="main")  # 'main' | 'supplies'
     tradeName = Column(String(255), nullable=True)
     genericName = Column(String(255), nullable=True)
@@ -334,7 +319,6 @@ class Employee(Base):
     __tablename__ = "employees"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     phone = Column(String(100), nullable=True)
     website = Column(String(255), nullable=True)
