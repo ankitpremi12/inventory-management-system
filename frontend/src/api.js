@@ -3,9 +3,10 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:800
 export const apiBaseUrl = API_BASE_URL;
 
 export const buildApiUrl = (endpoint) => {
-  // Ensure we don't double slash
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  return `${API_BASE_URL}${cleanEndpoint}`;
+  // Strip trailing slash from base URL and leading slash from endpoint
+  const cleanBase = API_BASE_URL.replace(/\/+$/, '');
+  const cleanEndpoint = endpoint.replace(/^\/+/, '');
+  return `${cleanBase}/${cleanEndpoint}`;
 };
 
 export const fetchJson = async (endpoint, options = {}) => {
