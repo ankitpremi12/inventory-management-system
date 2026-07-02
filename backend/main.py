@@ -41,6 +41,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.responses import RedirectResponse
+
+# ── ROOT REDIRECT ─────────────────────────────────────────────────────────────
+@app.get("/", include_in_schema=False)
+def root():
+    return RedirectResponse(url="/docs")
+
 # ── AUTH ENDPOINTS ─────────────────────────────────────────────────────────────
 
 @app.post("/auth/register", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
