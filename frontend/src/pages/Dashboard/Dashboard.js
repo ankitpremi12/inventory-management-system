@@ -101,7 +101,7 @@ const Dashboard = () => {
                         boxShadow: '0 2px 8px rgba(15, 40, 60, 0.05)',
                         flexShrink: 0,
                     }}>
-                        <CubeLogo />
+                        <img src="/favicon.png" alt="AP Solutions" style={{ width: '100%', height: '100%', borderRadius: 12, objectFit: 'cover' }} />
                     </div>
                 </div>
 
