@@ -113,14 +113,14 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
 
     # Check uniqueness of SKU (only if not None)
     if product.sku is not None:
-        db_product = db.query(models.Product).filter(models.Product.sku == product.sku).first()
+        db_product = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.sku == product.sku).first()
         if db_product:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Product with SKU/code '{product.sku}' already exists."
             )
     
-    new_product = models.Product(**product.model_dump())
+    new_product = models.Product(owner_id=current_user.id, **product.model_dump())
     new_product.sku = product.sku # Ensure None is written if converted
     db.add(new_product)
     try:
@@ -136,11 +136,11 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
 
 @app.get("/products", response_model=List[schemas.ProductResponse])
 def get_products(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Product).all()
+    return db.query(models.Product).filter(models.Product.owner_id == current_user.id).all()
 
 @app.get("/products/{product_id:int}", response_model=schemas.ProductResponse)
 def get_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    product = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -150,7 +150,7 @@ def get_product(product_id: int, db: Session = Depends(get_db), current_user: mo
 
 @app.put("/products/{product_id:int}", response_model=schemas.ProductResponse)
 def update_product(product_id: int, product_update: schemas.ProductUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    product = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -172,7 +172,7 @@ def update_product(product_id: int, product_update: schemas.ProductUpdate, db: S
 
         # Check SKU uniqueness if it's changing and is not None
         if val is not None and val != product.sku:
-            existing = db.query(models.Product).filter(models.Product.sku == val).first()
+            existing = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.sku == val).first()
             if existing:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -195,7 +195,7 @@ def update_product(product_id: int, product_update: schemas.ProductUpdate, db: S
 
 @app.delete("/products/{product_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    product = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == product_id).first()
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -212,14 +212,14 @@ def delete_product(product_id: int, db: Session = Depends(get_db), current_user:
 @app.post("/customers", response_model=schemas.CustomerResponse, status_code=status.HTTP_201_CREATED)
 def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     # Check email uniqueness
-    db_customer = db.query(models.Customer).filter(models.Customer.email == customer.email).first()
+    db_customer = db.query(models.Customer).filter(models.Customer.owner_id == current_user.id).filter(models.Customer.email == customer.email).first()
     if db_customer:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Customer with email '{customer.email}' already exists."
         )
         
-    new_customer = models.Customer(**customer.model_dump())
+    new_customer = models.Customer(owner_id=current_user.id, **customer.model_dump())
     db.add(new_customer)
     try:
         db.commit()
@@ -234,11 +234,11 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
 
 @app.get("/customers", response_model=List[schemas.CustomerResponse])
 def get_customers(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Customer).all()
+    return db.query(models.Customer).filter(models.Customer.owner_id == current_user.id).all()
 
 @app.get("/customers/{customer_id:int}", response_model=schemas.CustomerResponse)
 def get_customer(customer_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
+    customer = db.query(models.Customer).filter(models.Customer.owner_id == current_user.id).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -248,7 +248,7 @@ def get_customer(customer_id: int, db: Session = Depends(get_db), current_user: 
 
 @app.delete("/customers/{customer_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_customer(customer_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
+    customer = db.query(models.Customer).filter(models.Customer.owner_id == current_user.id).filter(models.Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -265,7 +265,7 @@ def delete_customer(customer_id: int, db: Session = Depends(get_db), current_use
 @app.post("/orders", response_model=schemas.OrderResponse, status_code=status.HTTP_201_CREATED)
 def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     # 1. Verify customer exists
-    customer = db.query(models.Customer).filter(models.Customer.id == order_data.customer_id).first()
+    customer = db.query(models.Customer).filter(models.Customer.owner_id == current_user.id).filter(models.Customer.id == order_data.customer_id).first()
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -286,7 +286,7 @@ def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db),
     try:
         # 2. Lock product rows and check stock to prevent race conditions in concurrent orders
         for item in order_data.items:
-            product = db.query(models.Product).filter(models.Product.id == item.product_id).with_for_update().first()
+            product = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == item.product_id).with_for_update().first()
             if not product:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -307,7 +307,7 @@ def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db),
             product.quantity -= item.quantity
             
             # Create OrderItem object
-            order_item = models.OrderItem(
+            order_item = models.OrderItem(owner_id=current_user.id, 
                 product_id=product.id,
                 quantity=item.quantity,
                 price_at_order=product.price
@@ -315,7 +315,7 @@ def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db),
             order_items_to_create.append(order_item)
 
         # 3. Create the parent Order record
-        db_order = models.Order(
+        db_order = models.Order(owner_id=current_user.id, 
             customer_id=customer.id,
             total_amount=total_amount
         )
@@ -335,7 +335,7 @@ def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db),
         response_order.customer_name = customer.name
         
         for item_resp in response_order.items:
-            product_name = db.query(models.Product.name).filter(models.Product.id == item_resp.product_id).scalar()
+            product_name = db.query(models.Product.name).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == item_resp.product_id).scalar()
             item_resp.product_name = product_name or "Unknown Product"
             
         return response_order
@@ -352,16 +352,16 @@ def create_order(order_data: schemas.OrderCreate, db: Session = Depends(get_db),
 
 @app.get("/orders", response_model=List[schemas.OrderResponse])
 def get_orders(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    orders = db.query(models.Order).all()
+    orders = db.query(models.Order).filter(models.Order.owner_id == current_user.id).all()
     response_orders = []
     
     for order in orders:
-        c_name = db.query(models.Customer.name).filter(models.Customer.id == order.customer_id).scalar()
+        c_name = db.query(models.Customer.name).filter(models.Customer.owner_id == current_user.id).filter(models.Customer.id == order.customer_id).scalar()
         resp = schemas.OrderResponse.model_validate(order)
         resp.customer_name = c_name or "Unknown Customer"
         
         for item in resp.items:
-            p_name = db.query(models.Product.name).filter(models.Product.id == item.product_id).scalar()
+            p_name = db.query(models.Product.name).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == item.product_id).scalar()
             item.product_name = p_name or "Unknown Product"
             
         response_orders.append(resp)
@@ -370,26 +370,26 @@ def get_orders(db: Session = Depends(get_db), current_user: models.User = Depend
 
 @app.get("/orders/{order_id:int}", response_model=schemas.OrderResponse)
 def get_order(order_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    order = db.query(models.Order).filter(models.Order.owner_id == current_user.id).filter(models.Order.id == order_id).first()
     if not order:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Order with ID {order_id:int} not found."
         )
         
-    c_name = db.query(models.Customer.name).filter(models.Customer.id == order.customer_id).scalar()
+    c_name = db.query(models.Customer.name).filter(models.Customer.owner_id == current_user.id).filter(models.Customer.id == order.customer_id).scalar()
     resp = schemas.OrderResponse.model_validate(order)
     resp.customer_name = c_name or "Unknown Customer"
     
     for item in resp.items:
-        p_name = db.query(models.Product.name).filter(models.Product.id == item.product_id).scalar()
+        p_name = db.query(models.Product.name).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == item.product_id).scalar()
         item.product_name = p_name or "Unknown Product"
         
     return resp
 
 @app.delete("/orders/{order_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def cancel_order(order_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    order = db.query(models.Order).filter(models.Order.owner_id == current_user.id).filter(models.Order.id == order_id).first()
     if not order:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -400,7 +400,7 @@ def cancel_order(order_id: int, db: Session = Depends(get_db), current_user: mod
     try:
         for item in order.items:
             # Lock the product row during restocking
-            product = db.query(models.Product).filter(models.Product.id == item.product_id).with_for_update().first()
+            product = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.id == item.product_id).with_for_update().first()
             if product:
                 product.quantity += item.quantity
                 
@@ -419,12 +419,12 @@ def cancel_order(order_id: int, db: Session = Depends(get_db), current_user: mod
 
 @app.get("/dashboard/summary")
 def get_dashboard_summary(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    total_products = db.query(models.Product).count()
-    total_customers = db.query(models.Customer).count()
-    total_orders = db.query(models.Order).count()
+    total_products = db.query(models.Product).filter(models.Product.owner_id == current_user.id).count()
+    total_customers = db.query(models.Customer).filter(models.Customer.owner_id == current_user.id).count()
+    total_orders = db.query(models.Order).filter(models.Order.owner_id == current_user.id).count()
     
     # Low stock: quantity <= 10
-    low_stock_products = db.query(models.Product).filter(models.Product.quantity <= 10).all()
+    low_stock_products = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.quantity <= 10).all()
     
     # Map products for summary display
     low_stock_list = []
@@ -485,9 +485,9 @@ def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.
         })
 
     # 3. Stock status distribution
-    in_stock_count = db.query(models.Product).filter(models.Product.quantity > 10).count()
-    low_stock_count = db.query(models.Product).filter(models.Product.quantity > 0, models.Product.quantity <= 10).count()
-    out_of_stock_count = db.query(models.Product).filter(models.Product.quantity == 0).count()
+    in_stock_count = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.quantity > 10).count()
+    low_stock_count = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.quantity > 0, models.Product.quantity <= 10).count()
+    out_of_stock_count = db.query(models.Product).filter(models.Product.owner_id == current_user.id).filter(models.Product.quantity == 0).count()
     
     stock_distribution = [
         {"name": "In Stock (>10)", "value": in_stock_count},
@@ -525,11 +525,11 @@ def get_dashboard_analytics(db: Session = Depends(get_db), current_user: models.
 
 @app.get("/setup/categories", response_model=List[schemas.CategoryResponse])
 def get_categories(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Category).all()
+    return db.query(models.Category).filter(models.Category.owner_id == current_user.id).all()
 
 @app.post("/setup/categories", response_model=schemas.CategoryResponse, status_code=status.HTTP_201_CREATED)
 def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_cat = models.Category(**category.model_dump())
+    new_cat = models.Category(owner_id=current_user.id, **category.model_dump())
     db.add(new_cat)
     db.commit()
     db.refresh(new_cat)
@@ -537,7 +537,7 @@ def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_
 
 @app.delete("/setup/categories/{category_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(category_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    cat = db.query(models.Category).filter(models.Category.id == category_id).first()
+    cat = db.query(models.Category).filter(models.Category.owner_id == current_user.id).filter(models.Category.id == category_id).first()
     if not cat:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found.")
     db.delete(cat)
@@ -549,11 +549,11 @@ def delete_category(category_id: int, db: Session = Depends(get_db), current_use
 
 @app.get("/setup/companies", response_model=List[schemas.CompanyResponse])
 def get_companies(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Company).all()
+    return db.query(models.Company).filter(models.Company.owner_id == current_user.id).all()
 
 @app.post("/setup/companies", response_model=schemas.CompanyResponse, status_code=status.HTTP_201_CREATED)
 def create_company(company: schemas.CompanyCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_co = models.Company(**company.model_dump())
+    new_co = models.Company(owner_id=current_user.id, **company.model_dump())
     db.add(new_co)
     db.commit()
     db.refresh(new_co)
@@ -561,7 +561,7 @@ def create_company(company: schemas.CompanyCreate, db: Session = Depends(get_db)
 
 @app.delete("/setup/companies/{company_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_company(company_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    co = db.query(models.Company).filter(models.Company.id == company_id).first()
+    co = db.query(models.Company).filter(models.Company.owner_id == current_user.id).filter(models.Company.id == company_id).first()
     if not co:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
     db.delete(co)
@@ -573,11 +573,11 @@ def delete_company(company_id: int, db: Session = Depends(get_db), current_user:
 
 @app.get("/setup/unitTypes", response_model=List[schemas.UnitTypeResponse])
 def get_unit_types(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.UnitType).all()
+    return db.query(models.UnitType).filter(models.UnitType.owner_id == current_user.id).all()
 
 @app.post("/setup/unitTypes", response_model=schemas.UnitTypeResponse, status_code=status.HTTP_201_CREATED)
 def create_unit_type(unit_type: schemas.UnitTypeCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_ut = models.UnitType(**unit_type.model_dump())
+    new_ut = models.UnitType(owner_id=current_user.id, **unit_type.model_dump())
     db.add(new_ut)
     db.commit()
     db.refresh(new_ut)
@@ -585,7 +585,7 @@ def create_unit_type(unit_type: schemas.UnitTypeCreate, db: Session = Depends(ge
 
 @app.delete("/setup/unitTypes/{unit_type_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_unit_type(unit_type_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    ut = db.query(models.UnitType).filter(models.UnitType.id == unit_type_id).first()
+    ut = db.query(models.UnitType).filter(models.UnitType.owner_id == current_user.id).filter(models.UnitType.id == unit_type_id).first()
     if not ut:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unit type not found.")
     db.delete(ut)
@@ -597,11 +597,11 @@ def delete_unit_type(unit_type_id: int, db: Session = Depends(get_db), current_u
 
 @app.get("/suppliers/lists", response_model=List[schemas.SupplierResponse])
 def get_suppliers(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Supplier).all()
+    return db.query(models.Supplier).filter(models.Supplier.owner_id == current_user.id).all()
 
 @app.post("/suppliers/lists", response_model=schemas.SupplierResponse, status_code=status.HTTP_201_CREATED)
 def create_supplier(supplier: schemas.SupplierCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_sup = models.Supplier(**supplier.model_dump())
+    new_sup = models.Supplier(owner_id=current_user.id, **supplier.model_dump())
     db.add(new_sup)
     db.commit()
     db.refresh(new_sup)
@@ -609,7 +609,7 @@ def create_supplier(supplier: schemas.SupplierCreate, db: Session = Depends(get_
 
 @app.delete("/suppliers/lists/{supplier_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_supplier(supplier_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    sup = db.query(models.Supplier).filter(models.Supplier.id == supplier_id).first()
+    sup = db.query(models.Supplier).filter(models.Supplier.owner_id == current_user.id).filter(models.Supplier.id == supplier_id).first()
     if not sup:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Supplier not found.")
     db.delete(sup)
@@ -621,11 +621,11 @@ def delete_supplier(supplier_id: int, db: Session = Depends(get_db), current_use
 
 @app.get("/suppliers/documents", response_model=List[schemas.SupplierDocumentResponse])
 def get_supplier_documents(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.SupplierDocument).all()
+    return db.query(models.SupplierDocument).filter(models.SupplierDocument.owner_id == current_user.id).all()
 
 @app.post("/suppliers/documents", response_model=schemas.SupplierDocumentResponse, status_code=status.HTTP_201_CREATED)
 def create_supplier_document(doc: schemas.SupplierDocumentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_doc = models.SupplierDocument(**doc.model_dump())
+    new_doc = models.SupplierDocument(owner_id=current_user.id, **doc.model_dump())
     db.add(new_doc)
     db.commit()
     db.refresh(new_doc)
@@ -633,7 +633,7 @@ def create_supplier_document(doc: schemas.SupplierDocumentCreate, db: Session = 
 
 @app.delete("/suppliers/documents/{doc_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_supplier_document(doc_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    doc = db.query(models.SupplierDocument).filter(models.SupplierDocument.id == doc_id).first()
+    doc = db.query(models.SupplierDocument).filter(models.SupplierDocument.owner_id == current_user.id).filter(models.SupplierDocument.id == doc_id).first()
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found.")
     db.delete(doc)
@@ -645,11 +645,11 @@ def delete_supplier_document(doc_id: int, db: Session = Depends(get_db), current
 
 @app.get("/suppliers/payments", response_model=List[schemas.SupplierPaymentResponse])
 def get_supplier_payments(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.SupplierPayment).all()
+    return db.query(models.SupplierPayment).filter(models.SupplierPayment.owner_id == current_user.id).all()
 
 @app.post("/suppliers/payments", response_model=schemas.SupplierPaymentResponse, status_code=status.HTTP_201_CREATED)
 def create_supplier_payment(payment: schemas.SupplierPaymentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_pay = models.SupplierPayment(**payment.model_dump())
+    new_pay = models.SupplierPayment(owner_id=current_user.id, **payment.model_dump())
     db.add(new_pay)
     db.commit()
     db.refresh(new_pay)
@@ -657,7 +657,7 @@ def create_supplier_payment(payment: schemas.SupplierPaymentCreate, db: Session 
 
 @app.delete("/suppliers/payments/{payment_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_supplier_payment(payment_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    pay = db.query(models.SupplierPayment).filter(models.SupplierPayment.id == payment_id).first()
+    pay = db.query(models.SupplierPayment).filter(models.SupplierPayment.owner_id == current_user.id).filter(models.SupplierPayment.id == payment_id).first()
     if not pay:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found.")
     db.delete(pay)
@@ -669,11 +669,11 @@ def delete_supplier_payment(payment_id: int, db: Session = Depends(get_db), curr
 
 @app.get("/products/main", response_model=List[schemas.PharmacyProductResponse])
 def get_pharmacy_products(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.PharmacyProduct).all()
+    return db.query(models.PharmacyProduct).filter(models.PharmacyProduct.owner_id == current_user.id).all()
 
 @app.post("/products/main", response_model=schemas.PharmacyProductResponse, status_code=status.HTTP_201_CREATED)
 def create_pharmacy_product(product: schemas.PharmacyProductCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_prod = models.PharmacyProduct(**product.model_dump())
+    new_prod = models.PharmacyProduct(owner_id=current_user.id, **product.model_dump())
     db.add(new_prod)
     db.commit()
     db.refresh(new_prod)
@@ -681,7 +681,7 @@ def create_pharmacy_product(product: schemas.PharmacyProductCreate, db: Session 
 
 @app.delete("/products/main/{product_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pharmacy_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    prod = db.query(models.PharmacyProduct).filter(models.PharmacyProduct.id == product_id).first()
+    prod = db.query(models.PharmacyProduct).filter(models.PharmacyProduct.owner_id == current_user.id).filter(models.PharmacyProduct.id == product_id).first()
     if not prod:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Pharmacy product not found.")
     db.delete(prod)
@@ -693,11 +693,11 @@ def delete_pharmacy_product(product_id: int, db: Session = Depends(get_db), curr
 
 @app.get("/products/supplies", response_model=List[schemas.PharmacyProductResponse])
 def get_non_pharmacy_products(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.NonPharmacyProduct).all()
+    return db.query(models.NonPharmacyProduct).filter(models.NonPharmacyProduct.owner_id == current_user.id).all()
 
 @app.post("/products/supplies", response_model=schemas.PharmacyProductResponse, status_code=status.HTTP_201_CREATED)
 def create_non_pharmacy_product(product: schemas.PharmacyProductCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_prod = models.NonPharmacyProduct(**product.model_dump())
+    new_prod = models.NonPharmacyProduct(owner_id=current_user.id, **product.model_dump())
     db.add(new_prod)
     db.commit()
     db.refresh(new_prod)
@@ -705,7 +705,7 @@ def create_non_pharmacy_product(product: schemas.PharmacyProductCreate, db: Sess
 
 @app.delete("/products/supplies/{product_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_non_pharmacy_product(product_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    prod = db.query(models.NonPharmacyProduct).filter(models.NonPharmacyProduct.id == product_id).first()
+    prod = db.query(models.NonPharmacyProduct).filter(models.NonPharmacyProduct.owner_id == current_user.id).filter(models.NonPharmacyProduct.id == product_id).first()
     if not prod:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Non-pharmacy product not found.")
     db.delete(prod)
@@ -717,13 +717,13 @@ def delete_non_pharmacy_product(product_id: int, db: Session = Depends(get_db), 
 
 @app.get("/purchases/main", response_model=List[schemas.PurchaseResponse])
 def get_pharmacy_purchases(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Purchase).filter(models.Purchase.product_type == "main").all()
+    return db.query(models.Purchase).filter(models.Purchase.owner_id == current_user.id).filter(models.Purchase.product_type == "main").all()
 
 @app.post("/purchases/main", response_model=schemas.PurchaseResponse, status_code=status.HTTP_201_CREATED)
 def create_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     data = purchase.model_dump()
     data["product_type"] = "main"
-    new_purchase = models.Purchase(**data)
+    new_purchase = models.Purchase(owner_id=current_user.id, **data)
     db.add(new_purchase)
     db.commit()
     db.refresh(new_purchase)
@@ -731,7 +731,7 @@ def create_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session = Dep
 
 @app.delete("/purchases/main/{purchase_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    p = db.query(models.Purchase).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "main").first()
+    p = db.query(models.Purchase).filter(models.Purchase.owner_id == current_user.id).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "main").first()
     if not p:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Purchase not found.")
     db.delete(p)
@@ -743,13 +743,13 @@ def delete_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db), cu
 
 @app.get("/purchases/supplies", response_model=List[schemas.PurchaseResponse])
 def get_non_pharmacy_purchases(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Purchase).filter(models.Purchase.product_type == "supplies").all()
+    return db.query(models.Purchase).filter(models.Purchase.owner_id == current_user.id).filter(models.Purchase.product_type == "supplies").all()
 
 @app.post("/purchases/supplies", response_model=schemas.PurchaseResponse, status_code=status.HTTP_201_CREATED)
 def create_non_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     data = purchase.model_dump()
     data["product_type"] = "supplies"
-    new_purchase = models.Purchase(**data)
+    new_purchase = models.Purchase(owner_id=current_user.id, **data)
     db.add(new_purchase)
     db.commit()
     db.refresh(new_purchase)
@@ -757,7 +757,7 @@ def create_non_pharmacy_purchase(purchase: schemas.PurchaseCreate, db: Session =
 
 @app.delete("/purchases/supplies/{purchase_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_non_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    p = db.query(models.Purchase).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "supplies").first()
+    p = db.query(models.Purchase).filter(models.Purchase.owner_id == current_user.id).filter(models.Purchase.id == purchase_id, models.Purchase.product_type == "supplies").first()
     if not p:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Purchase not found.")
     db.delete(p)
@@ -769,13 +769,13 @@ def delete_non_pharmacy_purchase(purchase_id: int, db: Session = Depends(get_db)
 
 @app.get("/returns/customers", response_model=List[schemas.ReturnResponse])
 def get_customer_returns(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Return).filter(models.Return.return_type == "customers").all()
+    return db.query(models.Return).filter(models.Return.owner_id == current_user.id).filter(models.Return.return_type == "customers").all()
 
 @app.post("/returns/customers", response_model=schemas.ReturnResponse, status_code=status.HTTP_201_CREATED)
 def create_customer_return(ret: schemas.ReturnCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     data = ret.model_dump()
     data["return_type"] = "customers"
-    new_ret = models.Return(**data)
+    new_ret = models.Return(owner_id=current_user.id, **data)
     db.add(new_ret)
     db.commit()
     db.refresh(new_ret)
@@ -783,7 +783,7 @@ def create_customer_return(ret: schemas.ReturnCreate, db: Session = Depends(get_
 
 @app.delete("/returns/customers/{return_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_customer_return(return_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    r = db.query(models.Return).filter(models.Return.id == return_id, models.Return.return_type == "customers").first()
+    r = db.query(models.Return).filter(models.Return.owner_id == current_user.id).filter(models.Return.id == return_id, models.Return.return_type == "customers").first()
     if not r:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Return not found.")
     db.delete(r)
@@ -795,13 +795,13 @@ def delete_customer_return(return_id: int, db: Session = Depends(get_db), curren
 
 @app.get("/returns/expiresOrDamages", response_model=List[schemas.ReturnResponse])
 def get_expires_damages_returns(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Return).filter(models.Return.return_type == "expiresOrDamages").all()
+    return db.query(models.Return).filter(models.Return.owner_id == current_user.id).filter(models.Return.return_type == "expiresOrDamages").all()
 
 @app.post("/returns/expiresOrDamages", response_model=schemas.ReturnResponse, status_code=status.HTTP_201_CREATED)
 def create_expires_damages_return(ret: schemas.ReturnCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     data = ret.model_dump()
     data["return_type"] = "expiresOrDamages"
-    new_ret = models.Return(**data)
+    new_ret = models.Return(owner_id=current_user.id, **data)
     db.add(new_ret)
     db.commit()
     db.refresh(new_ret)
@@ -809,7 +809,7 @@ def create_expires_damages_return(ret: schemas.ReturnCreate, db: Session = Depen
 
 @app.delete("/returns/expiresOrDamages/{return_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_expires_damages_return(return_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    r = db.query(models.Return).filter(models.Return.id == return_id, models.Return.return_type == "expiresOrDamages").first()
+    r = db.query(models.Return).filter(models.Return.owner_id == current_user.id).filter(models.Return.id == return_id, models.Return.return_type == "expiresOrDamages").first()
     if not r:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Return not found.")
     db.delete(r)
@@ -821,13 +821,13 @@ def delete_expires_damages_return(return_id: int, db: Session = Depends(get_db),
 
 @app.get("/requestedItems/main", response_model=List[schemas.RequestedItemResponse])
 def get_pharmacy_requested_items(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.RequestedItem).filter(models.RequestedItem.item_type == "main").all()
+    return db.query(models.RequestedItem).filter(models.RequestedItem.owner_id == current_user.id).filter(models.RequestedItem.item_type == "main").all()
 
 @app.post("/requestedItems/main", response_model=schemas.RequestedItemResponse, status_code=status.HTTP_201_CREATED)
 def create_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     data = item.model_dump()
     data["item_type"] = "main"
-    new_item = models.RequestedItem(**data)
+    new_item = models.RequestedItem(owner_id=current_user.id, **data)
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
@@ -835,7 +835,7 @@ def create_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Sessio
 
 @app.delete("/requestedItems/main/{item_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pharmacy_requested_item(item_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    it = db.query(models.RequestedItem).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "main").first()
+    it = db.query(models.RequestedItem).filter(models.RequestedItem.owner_id == current_user.id).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "main").first()
     if not it:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested item not found.")
     db.delete(it)
@@ -847,13 +847,13 @@ def delete_pharmacy_requested_item(item_id: int, db: Session = Depends(get_db), 
 
 @app.get("/requestedItems/supplies", response_model=List[schemas.RequestedItemResponse])
 def get_non_pharmacy_requested_items(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.RequestedItem).filter(models.RequestedItem.item_type == "supplies").all()
+    return db.query(models.RequestedItem).filter(models.RequestedItem.owner_id == current_user.id).filter(models.RequestedItem.item_type == "supplies").all()
 
 @app.post("/requestedItems/supplies", response_model=schemas.RequestedItemResponse, status_code=status.HTTP_201_CREATED)
 def create_non_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     data = item.model_dump()
     data["item_type"] = "supplies"
-    new_item = models.RequestedItem(**data)
+    new_item = models.RequestedItem(owner_id=current_user.id, **data)
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
@@ -861,7 +861,7 @@ def create_non_pharmacy_requested_item(item: schemas.RequestedItemCreate, db: Se
 
 @app.delete("/requestedItems/supplies/{item_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_non_pharmacy_requested_item(item_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    it = db.query(models.RequestedItem).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "supplies").first()
+    it = db.query(models.RequestedItem).filter(models.RequestedItem.owner_id == current_user.id).filter(models.RequestedItem.id == item_id, models.RequestedItem.item_type == "supplies").first()
     if not it:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested item not found.")
     db.delete(it)
@@ -873,11 +873,11 @@ def delete_non_pharmacy_requested_item(item_id: int, db: Session = Depends(get_d
 
 @app.get("/employees", response_model=List[schemas.EmployeeResponse])
 def get_employees(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    return db.query(models.Employee).all()
+    return db.query(models.Employee).filter(models.Employee.owner_id == current_user.id).all()
 
 @app.post("/employees", response_model=schemas.EmployeeResponse, status_code=status.HTTP_201_CREATED)
 def create_employee(employee: schemas.EmployeeCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    new_emp = models.Employee(**employee.model_dump())
+    new_emp = models.Employee(owner_id=current_user.id, **employee.model_dump())
     db.add(new_emp)
     db.commit()
     db.refresh(new_emp)
@@ -885,7 +885,7 @@ def create_employee(employee: schemas.EmployeeCreate, db: Session = Depends(get_
 
 @app.delete("/employees/{employee_id:int}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_employee(employee_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    emp = db.query(models.Employee).filter(models.Employee.id == employee_id).first()
+    emp = db.query(models.Employee).filter(models.Employee.owner_id == current_user.id).filter(models.Employee.id == employee_id).first()
     if not emp:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found.")
     db.delete(emp)
